@@ -1,13 +1,8 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import type { PostData } from '../types';
 
-interface Props {
-  title: string;
-  description: string;
-  pubDate: Date;
-  tags?: string[];
-  readingTime?: number;
-}
+type Props = PostData;
 
 const { title, description, pubDate, tags = [], readingTime } = Astro.props;
 

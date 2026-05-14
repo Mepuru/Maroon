@@ -1,12 +1,7 @@
 ---
-interface Props {
-  title: string;
-  description: string;
-  pubDate: Date;
-  slug: string;
-  tags?: string[];
-  readingTime?: number;
-}
+import type { PostCardProps } from '../types';
+
+type Props = PostCardProps;
 
 const { title, description, pubDate, slug, tags = [], readingTime } = Astro.props;
 
