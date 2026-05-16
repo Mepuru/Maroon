@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublishedDocs } from '../../utils/content';
 
 interface Props {
   currentSlug?: string;
@@ -7,14 +7,7 @@ interface Props {
 
 const { currentSlug } = Astro.props;
 
-let docs: Awaited<ReturnType<typeof getCollection<'docs'>>> = [];
-try {
-  docs = (await getCollection('docs'))
-    .filter((doc) => !doc.data.draft)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-} catch {
-  docs = [];
-}
+const docs = await getPublishedDocs();
 
 // 按 category 分组
 const groups = new Map<string, typeof docs>();

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/blog/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../../utils/content';
 import { estimateReadingTime } from '../../utils/reading-time';
 
 export async function getStaticPaths() {
@@ -17,14 +18,8 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.props;
 
-let posts: Awaited<ReturnType<typeof getCollection<'blog'>>> = [];
-try {
-  posts = (await getCollection('blog'))
-    .filter((p) => !p.data.draft && p.data.tags.includes(tag))
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-} catch {
-  posts = [];
-}
+const publishedPosts = await getPublishedPosts();
+const posts = publishedPosts.filter((p) => p.data.tags.includes(tag));
 ---
 
 <BaseLayout title={`${tag} - 栗かな的博客`} sidebar={true}>
