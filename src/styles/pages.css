@@ -17,3 +17,16 @@
   background-clip: text;
   margin-bottom: 1rem;
 }
+
+/* Blog & Tags - Post Grid Layout */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .post-grid {
+    grid-template-columns: 1fr;
+  }
+}
