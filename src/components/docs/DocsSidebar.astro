@@ -36,11 +36,11 @@ const sortedCategories = [...groups.keys()].sort();
 
   <nav class="sidebar-nav">
     {sortedCategories.map((cat) => (
-      <details class="category-group" open>
-        <summary class="category-name">
+      <div class="category-group">
+        <button class="category-name" onclick="this.parentElement.classList.toggle('collapsed')">
           {cat}
           <span class="category-count">{groups.get(cat)!.length}</span>
-        </summary>
+        </button>
         <div class="category-items">
           {groups.get(cat)!.map((doc) => (
             <a
@@ -52,15 +52,15 @@ const sortedCategories = [...groups.keys()].sort();
             </a>
           ))}
         </div>
-      </details>
+      </div>
     ))}
 
     {uncategorized.length > 0 && sortedCategories.length > 0 && (
-      <details class="category-group" open>
-        <summary class="category-name">
+      <div class="category-group">
+        <button class="category-name" onclick="this.parentElement.classList.toggle('collapsed')">
           未分类
           <span class="category-count">{uncategorized.length}</span>
-        </summary>
+        </button>
         <div class="category-items">
           {uncategorized.map((doc) => (
             <a
@@ -72,7 +72,7 @@ const sortedCategories = [...groups.keys()].sort();
             </a>
           ))}
         </div>
-      </details>
+      </div>
     )}
 
     {uncategorized.length > 0 && sortedCategories.length === 0 && (
@@ -137,27 +137,26 @@ const sortedCategories = [...groups.keys()].sort();
     overflow: hidden;
   }
 
-  .category-group[open] {
-    border-color: var(--border);
-  }
-
   .category-name {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     padding: 0.5rem 0.75rem;
     font-size: 0.82rem;
     font-weight: 600;
     color: var(--fg);
     cursor: pointer;
     user-select: none;
-    list-style: none;
     background: var(--bg-secondary);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    font-family: inherit;
     transition: background 0.2s ease;
   }
 
-  .category-name::-webkit-details-marker {
-    display: none;
+  .category-group.collapsed .category-name {
+    border-bottom: none;
   }
 
   .category-name::before {
@@ -165,16 +164,16 @@ const sortedCategories = [...groups.keys()].sort();
     display: inline-block;
     margin-right: 0.5rem;
     font-size: 0.7rem;
-    transition: transform 0.2s ease;
+    transition: transform 0.35s ease;
     color: var(--muted);
   }
 
-  .category-group[open] .category-name::before {
-    transform: rotate(90deg);
+  .category-group.collapsed .category-name::before {
+    transform: rotate(0deg);
   }
 
-  .category-group[open] .category-name {
-    border-bottom: 1px solid var(--border);
+  .category-group:not(.collapsed) .category-name::before {
+    transform: rotate(90deg);
   }
 
   .category-name:hover {
@@ -194,14 +193,15 @@ const sortedCategories = [...groups.keys()].sort();
   .category-items {
     display: flex;
     flex-direction: column;
-    max-height: 0;
+    max-height: 600px;
     overflow: hidden;
     transition: max-height 0.35s ease;
+    padding: 0.25rem 0;
   }
 
-  .category-group[open] .category-items {
-    max-height: 600px;
-    padding: 0.25rem 0;
+  .category-group.collapsed .category-items {
+    max-height: 0;
+    padding: 0;
   }
 
   /* 文档链接 */
