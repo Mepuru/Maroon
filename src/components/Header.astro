@@ -15,7 +15,7 @@ const currentPath = Astro.url.pathname;
     </nav>
 
     <div class="nav-right">
-      <button class="search-trigger desktop-only" onclick="document.getElementById('search-modal').classList.add('open'); document.getElementById('search-input').focus();" aria-label="搜索">
+      <button class="search-trigger" onclick="document.getElementById('search-modal').classList.add('open'); document.getElementById('search-input').focus();" aria-label="搜索">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/>
           <path d="M21 21l-4.35-4.35"/>
@@ -56,9 +56,6 @@ const currentPath = Astro.url.pathname;
       <a href="/about" class:list={[{ active: currentPath === '/about' }]}>关于</a>
     </nav>
     <div class="mobile-actions">
-      <button class="mobile-search-trigger" onclick="document.getElementById('search-modal').classList.add('open'); document.getElementById('search-input').focus(); document.getElementById('mobile-menu').classList.remove('open');">
-        搜索
-      </button>
       <div class="mobile-theme-switcher">
         {themes.map(theme => (
           <button class="theme-option" data-theme={theme.id}>{theme.name}</button>
