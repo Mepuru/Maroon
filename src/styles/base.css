@@ -72,6 +72,30 @@
   --theme-label: #A0896C;
 }
 
+/* ============================================
+   响应式字体变量
+   ============================================ */
+
+:root {
+  /* 手机端字体 */
+  --font-size-hero-title: 1.75rem;
+  --font-size-card-title: 1.25rem;
+  --font-size-card-desc: 0.95rem;
+  --font-size-stats: 1.5rem;
+  --font-size-text: 0.9rem;
+}
+
+@media (min-width: 769px) {
+  :root {
+    /* 电脑端字体 */
+    --font-size-hero-title: 2.5rem;
+    --font-size-card-title: 1.75rem;
+    --font-size-card-desc: 1.05rem;
+    --font-size-stats: 2.5rem;
+    --font-size-text: 1rem;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -31,14 +31,14 @@
 }
 
 .card-title {
-  font-size: 1.5rem;
+  font-size: var(--font-size-card-title);
   font-weight: 700;
   color: var(--fg);
   margin: 0 0 0.5rem 0;
 }
 
 .card-description {
-  font-size: 0.95rem;
+  font-size: var(--font-size-card-desc);
   color: var(--muted);
   margin: 0 0 1rem 0;
 }
@@ -50,7 +50,7 @@
 }
 
 .stats-number {
-  font-size: 2rem;
+  font-size: var(--font-size-stats);
   font-weight: 700;
   color: var(--accent);
   line-height: 1;
@@ -92,7 +92,7 @@
 }
 
 .recent-item {
-  font-size: 0.9rem;
+  font-size: var(--font-size-text);
   color: var(--fg);
   padding-left: 1rem;
   position: relative;
@@ -114,7 +114,7 @@
 .card-link {
   display: inline-block;
   color: var(--accent);
-  font-size: 0.9rem;
+  font-size: var(--font-size-text);
   font-weight: 500;
   transition: color 0.2s ease;
 }

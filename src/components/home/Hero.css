@@ -38,7 +38,7 @@
 }
 
 .hero-title {
-  font-size: 2rem;
+  font-size: var(--font-size-hero-title);
   font-weight: 700;
   color: var(--fg);
   line-height: 1.3;
