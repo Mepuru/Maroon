@@ -1,15 +1,21 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import LessonSidebar from '../components/lessons/LessonSidebar.astro';
+import TOC from '../components/shared/TOC.astro';
 
 interface Props {
   title: string;
   description?: string;
   date: Date;
   currentSlug?: string;
+  headings?: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
 }
 
-const { title, description, date, currentSlug } = Astro.props;
+const { title, description, date, currentSlug, headings = [] } = Astro.props;
 
 const dateStr = date.toLocaleDateString('zh-CN', {
   year: 'numeric',
@@ -34,6 +40,8 @@ const dateStr = date.toLocaleDateString('zh-CN', {
           <slot />
         </div>
       </article>
+
+      {headings.length > 0 && <TOC headings={headings} />}
     </main>
   </div>
 </BaseLayout>
