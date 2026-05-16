@@ -312,12 +312,8 @@
     display: none;
   }
 
-  .search-text {
+  .desktop-only {
     display: none;
-  }
-
-  .search-trigger {
-    padding: 0.5rem;
   }
 
   .menu-trigger {
