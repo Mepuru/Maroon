@@ -9,5 +9,12 @@ export interface PostCardProps {
   pubDate: Date;
   slug: string;
   tags?: string[];
+}
+
+export interface PostData {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
   readingTime?: number;
 }

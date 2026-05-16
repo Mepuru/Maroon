@@ -24,12 +24,3 @@ export interface SeriesCardProps {
 export interface SidebarProps {
   // Sidebar 组件目前没有 props
 }
-
-export interface PostCardProps {
-  title: string;
-  description: string;
-  pubDate: Date;
-  slug: string;
-  tags?: string[];
-  readingTime?: number;
-}

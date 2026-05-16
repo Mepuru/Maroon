@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import TOC from '../components/shared/TOC.astro';
 import type { PostData } from '../types';
+import { formatDate } from '../utils/date';
 
 type Props = PostData & {
   headings?: Array<{
@@ -13,11 +14,7 @@ type Props = PostData & {
 
 const { title, description, pubDate, tags = [], readingTime, headings = [] } = Astro.props;
 
-const dateStr = pubDate.toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
+const dateStr = formatDate(pubDate);
 ---
 
 <BaseLayout title={`${title} - 栗かな的博客`} description={description} sidebar={true}>

@@ -1,15 +1,12 @@
 ---
 import type { PostCardProps } from '../../types';
+import { formatDate } from '../../utils/date';
 
 type Props = PostCardProps;
 
-const { title, description, pubDate, slug, tags = [], readingTime } = Astro.props;
+const { title, description, pubDate, slug, tags = [] } = Astro.props;
 
-const dateStr = pubDate.toLocaleDateString('zh-CN', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
+const dateStr = formatDate(pubDate);
 ---
 
 <style>

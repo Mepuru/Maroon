@@ -69,55 +69,66 @@ const currentPath = Astro.url.pathname;
   </div>
 </header>
 
-<script is:inline>
-  // 主题切换
-  const trigger = document.getElementById('theme-trigger');
-  const menu = document.getElementById('theme-menu');
+<script>
+  function initHeader() {
+    // 主题切换
+    const trigger = document.getElementById('theme-trigger');
+    const menu = document.getElementById('theme-menu');
+    if (!trigger || !menu) return;
 
-  trigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menu.classList.toggle('open');
-  });
-
-  document.addEventListener('click', () => {
-    menu.classList.remove('open');
-  });
-
-  menu.addEventListener('click', (e) => {
-    const btn = e.target.closest('.theme-option');
-    if (!btn) return;
-    const theme = btn.dataset.theme;
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    menu.classList.remove('open');
-  });
-
-  // 移动端菜单
-  const menuTrigger = document.getElementById('menu-trigger');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  menuTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    mobileMenu.classList.toggle('open');
-    menuTrigger.classList.toggle('open');
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!mobileMenu.contains(e.target) && !menuTrigger.contains(e.target)) {
-      mobileMenu.classList.remove('open');
-      menuTrigger.classList.remove('open');
-    }
-  });
-
-  // 移动端主题切换
-  const mobileThemeButtons = mobileMenu.querySelectorAll('.theme-option');
-  mobileThemeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const theme = btn.dataset.theme;
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('theme', theme);
-      mobileMenu.classList.remove('open');
-      menuTrigger.classList.remove('open');
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('open');
     });
-  });
+
+    document.addEventListener('click', () => {
+      menu.classList.remove('open');
+    });
+
+    menu.addEventListener('click', (e) => {
+      const btn = (e.target as Element).closest('.theme-option');
+      if (!btn) return;
+      const theme = (btn as HTMLElement).dataset.theme;
+      if (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      }
+      menu.classList.remove('open');
+    });
+
+    // 移动端菜单
+    const menuTrigger = document.getElementById('menu-trigger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (!menuTrigger || !mobileMenu) return;
+
+    menuTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mobileMenu.classList.toggle('open');
+      menuTrigger.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target as Node) && !menuTrigger.contains(e.target as Node)) {
+        mobileMenu.classList.remove('open');
+        menuTrigger.classList.remove('open');
+      }
+    });
+
+    // 移动端主题切换
+    const mobileThemeButtons = mobileMenu.querySelectorAll('.theme-option');
+    mobileThemeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = (btn as HTMLElement).dataset.theme;
+        if (theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+          localStorage.setItem('theme', theme);
+        }
+        mobileMenu.classList.remove('open');
+        menuTrigger.classList.remove('open');
+      });
+    });
+  }
+
+  initHeader();
+  document.addEventListener('astro:after-swap', initHeader);
 </script>
