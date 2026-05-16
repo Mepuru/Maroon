@@ -1,5 +1,5 @@
 ---
-import type { PostCardProps } from '../types';
+import type { PostCardProps } from '../../types';
 
 type Props = PostCardProps;
 
@@ -11,6 +11,10 @@ const dateStr = pubDate.toLocaleDateString('zh-CN', {
   day: '2-digit',
 });
 ---
+
+<style>
+  @import './PostCard.css';
+</style>
 
 <article class="post-card">
   <div class="post-card-body">

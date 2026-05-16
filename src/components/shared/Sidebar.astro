@@ -10,6 +10,10 @@ const tagCounts = allTags.reduce((acc, tag) => {
 const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 ---
 
+<style>
+  @import './Sidebar.css';
+</style>
+
 <aside class="sidebar">
   <div class="profile-card">
     <img src="/icon.png" alt="栗かな" class="profile-avatar" />

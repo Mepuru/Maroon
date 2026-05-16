@@ -1,9 +1,5 @@
-// 重新导出所有类型
-export * from './types';
-
-// 为了向后兼容，保留原有的导入
 import type { z } from 'astro:content';
-import type { blogSchema } from './content.config';
+import type { blogSchema } from '../content.config';
 
 export type BlogPost = z.infer<typeof blogSchema>;
 

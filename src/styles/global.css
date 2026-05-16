@@ -1,9 +1,4 @@
 @import './base.css';
-@import './header.css';
 @import './theme-switcher.css';
-@import './post-card.css';
 @import './prose.css';
-@import './sidebar.css';
-@import './search.css';
-@import './footer.css';
 @import './pages.css';
