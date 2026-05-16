@@ -39,7 +39,7 @@
   top: 0.15em;
   width: 4px;
   height: 1.1em;
-  background: linear-gradient(180deg, var(--accent), #a78bfa);
+  background: linear-gradient(180deg, var(--accent), var(--accent-hover));
   border-radius: 2px;
 }
 
