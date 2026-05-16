@@ -32,14 +32,14 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
 
     <main class="docs-main">
       {hasDoc ? (
-        <article class="lesson">
-          <header class="lesson-header">
-            <div class="lesson-meta">
+        <article class="doc-article">
+          <header class="doc-header">
+            <div class="doc-meta">
               <time class="lesson-date">{dateStr}</time>
             </div>
-            <h1 class="lesson-title">{title}</h1>
+            <h1 class="doc-title">{title}</h1>
           </header>
-          <div class="lesson-content prose">
+          <div class="doc-content prose">
             <slot />
           </div>
           {(prev || next) && (
@@ -60,7 +60,7 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
           )}
         </article>
       ) : (
-        <div class="lesson lesson-empty">
+        <div class="doc-article doc-empty">
           <p>{emptyText}</p>
         </div>
       )}
@@ -111,13 +111,13 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
     min-width: 0;
   }
 
-  .lesson {
+  .doc-article {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
   }
 
-  .lesson-empty {
+  .doc-empty {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,13 +129,13 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
     text-align: center;
   }
 
-  .lesson-header {
+  .doc-header {
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px dashed var(--border);
   }
 
-  .lesson-meta {
+  .doc-meta {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -144,13 +144,13 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
     color: var(--muted);
   }
 
-  .lesson-title {
+  .doc-title {
     font-size: 1.75rem;
     line-height: 1.4;
     margin: 0;
   }
 
-  .lesson-content {
+  .doc-content {
     line-height: 1.9;
   }
 

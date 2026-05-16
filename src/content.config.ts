@@ -9,7 +9,7 @@ export const blogSchema = z.object({
   draft: z.boolean().default(false),
 });
 
-export const lessonSchema = z.object({
+export const docsSchema = z.object({
   title: z.string(),
   pubDate: z.coerce.date(),
   category: z.string().optional(),
@@ -23,7 +23,7 @@ const blog = defineCollection({
 
 const docs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
-  schema: lessonSchema,
+  schema: docsSchema,
 });
 
 const pages = defineCollection({
