@@ -10,6 +10,22 @@ const { currentSlug } = Astro.props;
 const docs = (await getCollection('docs'))
   .filter((doc) => !doc.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// 按 category 分组
+const groups = new Map<string, typeof docs>();
+const uncategorized: typeof docs = [];
+
+for (const doc of docs) {
+  const cat = doc.data.category;
+  if (cat) {
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat)!.push(doc);
+  } else {
+    uncategorized.push(doc);
+  }
+}
+
+const sortedCategories = [...groups.keys()].sort();
 ---
 
 <aside class="docs-sidebar" id="docs-sidebar">
@@ -19,20 +35,62 @@ const docs = (await getCollection('docs'))
   </div>
 
   <nav class="sidebar-nav">
-    {docs.map((doc) => (
-      <a
-        href={`/docs/${doc.id}`}
-        class:list={['sidebar-link', { active: currentSlug === doc.id }]}
-        title={doc.data.title}
-      >
-        {doc.data.title}
-      </a>
+    {sortedCategories.map((cat) => (
+      <details class="category-group" open>
+        <summary class="category-name">
+          {cat}
+          <span class="category-count">{groups.get(cat)!.length}</span>
+        </summary>
+        <div class="category-items">
+          {groups.get(cat)!.map((doc) => (
+            <a
+              href={`/docs/${doc.id}`}
+              class:list={['sidebar-link', { active: currentSlug === doc.id }]}
+              title={doc.data.title}
+            >
+              {doc.data.title}
+            </a>
+          ))}
+        </div>
+      </details>
     ))}
+
+    {uncategorized.length > 0 && sortedCategories.length > 0 && (
+      <details class="category-group" open>
+        <summary class="category-name">
+          未分类
+          <span class="category-count">{uncategorized.length}</span>
+        </summary>
+        <div class="category-items">
+          {uncategorized.map((doc) => (
+            <a
+              href={`/docs/${doc.id}`}
+              class:list={['sidebar-link', { active: currentSlug === doc.id }]}
+              title={doc.data.title}
+            >
+              {doc.data.title}
+            </a>
+          ))}
+        </div>
+      </details>
+    )}
+
+    {uncategorized.length > 0 && sortedCategories.length === 0 && (
+      uncategorized.map((doc) => (
+        <a
+          href={`/docs/${doc.id}`}
+          class:list={['sidebar-link', { active: currentSlug === doc.id }]}
+          title={doc.data.title}
+        >
+          {doc.data.title}
+        </a>
+      ))
+    )}
   </nav>
 </aside>
 
 <style>
-    .docs-sidebar {
+  .docs-sidebar {
     position: fixed;
     top: 64px;
     left: 0;
@@ -67,9 +125,67 @@ const docs = (await getCollection('docs'))
   .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
+    gap: 0.25rem;
   }
 
+  /* 分类组 */
+  .category-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .category-group[open] .category-name {
+    margin-bottom: 0.25rem;
+  }
+
+  .category-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color 0.2s ease, background 0.2s ease;
+    user-select: none;
+    list-style: none;
+  }
+
+  .category-name::-webkit-details-marker {
+    display: none;
+  }
+
+  .category-name::before {
+    content: '▸';
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+  }
+
+  .category-group[open] .category-name::before {
+    transform: rotate(90deg);
+  }
+
+  .category-name:hover {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .category-count {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .category-items {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 文档链接 */
   .sidebar-link {
     display: block;
     padding: 0.5rem 1rem;
@@ -97,7 +213,7 @@ const docs = (await getCollection('docs'))
   }
 
   @media (max-width: 768px) {
-  .docs-sidebar {
+    .docs-sidebar {
       z-index: 50;
       transform: translateX(-100%);
       transition: transform 0.3s ease;

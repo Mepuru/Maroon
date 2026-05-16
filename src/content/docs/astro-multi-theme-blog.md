@@ -1,6 +1,7 @@
 ---
 title: "用 Astro 搭建多主题博客：架构设计与实现"
 date: 2026-05-15
+category: "Astro"
 ---
 
 ## 为什么选择 Astro
