@@ -14,7 +14,7 @@ const currentPath = Astro.url.pathname;
     <nav class="nav-links">
       <a href="/" class:list={[{ active: currentPath === '/' }]}>首页</a>
       <a href="/blog" class:list={[{ active: currentPath.startsWith('/blog') }]}>博客</a>
-      <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>教案</a>
+      <a href="/docs" class:list={[{ active: currentPath.startsWith('/docs') }]}>文档</a>
       <a href="/about" class:list={[{ active: currentPath === '/about' }]}>关于</a>
     </nav>
 
@@ -56,7 +56,7 @@ const currentPath = Astro.url.pathname;
     <nav class="mobile-nav">
       <a href="/" class:list={[{ active: currentPath === '/' }]}>首页</a>
       <a href="/blog" class:list={[{ active: currentPath.startsWith('/blog') }]}>博客</a>
-      <a href="/lessons" class:list={[{ active: currentPath.startsWith('/lessons') }]}>教案</a>
+      <a href="/docs" class:list={[{ active: currentPath.startsWith('/docs') }]}>文档</a>
       <a href="/about" class:list={[{ active: currentPath === '/about' }]}>关于</a>
     </nav>
     <div class="mobile-actions">

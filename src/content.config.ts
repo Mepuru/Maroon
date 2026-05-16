@@ -20,8 +20,8 @@ const blog = defineCollection({
   schema: blogSchema,
 });
 
-const lessons = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/lessons' }),
+const docs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/docs' }),
   schema: lessonSchema,
 });
 
@@ -32,4 +32,4 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { blog, lessons, pages };
+export const collections = { blog, docs, pages };

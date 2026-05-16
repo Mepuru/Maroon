@@ -1,0 +1,310 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import DocsSidebar from '../components/docs/DocsSidebar.astro';
+import TOC from '../components/shared/TOC.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  currentSlug?: string;
+  headings?: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { title, description, date, currentSlug, headings = [] } = Astro.props;
+
+const dateStr = date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<BaseLayout title={`${title} - 文档`} description={description}>
+  <div class="docs-page">
+    <DocsSidebar currentSlug={currentSlug} />
+
+    <main class="docs-main">
+      <article class="lesson">
+        <header class="lesson-header">
+          <div class="lesson-meta">
+            <time class="lesson-date">{dateStr}</time>
+          </div>
+          <h1 class="lesson-title">{title}</h1>
+        </header>
+        <div class="lesson-content prose">
+          <slot />
+        </div>
+      </article>
+    </main>
+
+    <aside class="toc-wrapper" id="toc-wrapper">
+      <TOC headings={headings} />
+    </aside>
+  </div>
+
+  <!-- 移动端：侧边栏遮罩 -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- 移动端：侧边栏切换按钮 -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="打开目录">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <!-- 目录悬浮按钮（平板端） -->
+  <button class="toc-toggle" id="toc-toggle" aria-label="切换目录">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="15" y2="12"/>
+      <line x1="3" y1="18" x2="18" y2="18"/>
+    </svg>
+  </button>
+</BaseLayout>
+
+<style>
+  :global(.layout-wrapper) {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .docs-page {
+    min-height: calc(100vh - 64px);
+  }
+
+  .docs-main {
+    margin-left: 260px;
+    margin-right: 200px;
+    padding: 2rem 3rem;
+    min-width: 0;
+  }
+
+  .lesson {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .lesson-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .lesson-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .lesson-title {
+    font-size: 1.75rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .lesson-content {
+    line-height: 1.9;
+  }
+
+  /* ============================================
+     TOC（右侧，固定于视口右边缘）
+     ============================================ */
+  .toc-wrapper {
+    position: fixed;
+    top: 88px;
+    right: 0;
+    width: 200px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 1rem 1.25rem;
+    border-left: 1px solid var(--border);
+  }
+
+  /* ============================================
+     移动端：侧边栏遮罩
+     ============================================ */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 45;
+  }
+
+  .sidebar-backdrop.open {
+    display: block;
+  }
+
+  /* ============================================
+     移动端：侧边栏切换按钮
+     ============================================ */
+  .sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 76px;
+    left: 1rem;
+    z-index: 46;
+    width: 40px;
+    height: 40px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    align-items: center;
+    justify-content: center;
+    color: var(--fg);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* ============================================
+     TOC 悬浮按钮
+     ============================================ */
+  .toc-toggle {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+    transition: all 0.2s ease;
+  }
+
+  .toc-toggle:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .toc-toggle.open {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ============================================
+     响应式
+     ============================================ */
+
+  /* 平板端：隐藏 TOC */
+  @media (max-width: 1200px) {
+    .docs-main {
+      margin-right: 0;
+    }
+
+    .toc-wrapper {
+      display: none;
+    }
+
+    .toc-toggle {
+      display: flex;
+    }
+  }
+
+  /* TOC 全屏浮层 */
+  @media (max-width: 1200px) {
+    .toc-wrapper.is-overlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--card-bg);
+      padding: 4rem 1.5rem 2rem;
+      width: 100%;
+      max-height: none;
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+  }
+
+  /* 手机端：侧边栏变抽屉 */
+  @media (max-width: 768px) {
+    .docs-main {
+      margin-left: 0;
+      padding: 1.5rem 1rem;
+    }
+
+    .sidebar-toggle {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  function initSidebarToggle() {
+    const toggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('docs-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (!toggle || !sidebar || !backdrop) return;
+
+    function open() {
+      sidebar.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    toggle.addEventListener('click', open);
+    backdrop.addEventListener('click', close);
+
+    sidebar.addEventListener('click', (e) => {
+      if (e.target.closest('a')) close();
+    });
+  }
+
+  function initTocToggle() {
+    const toggle = document.getElementById('toc-toggle');
+    const wrapper = document.getElementById('toc-wrapper');
+
+    if (!toggle || !wrapper) return;
+
+    toggle.addEventListener('click', () => {
+      wrapper.classList.toggle('is-overlay');
+      toggle.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target) && !toggle.contains(e.target)) {
+        wrapper.classList.remove('is-overlay');
+        toggle.classList.remove('open');
+      }
+    });
+  }
+
+  initSidebarToggle();
+  initTocToggle();
+
+  document.addEventListener('astro:after-swap', () => {
+    initSidebarToggle();
+    initTocToggle();
+  });
+</script>

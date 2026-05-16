@@ -7,44 +7,47 @@ interface Props {
 
 const { currentSlug } = Astro.props;
 
-const lessons = (await getCollection('lessons'))
-  .filter((lesson) => !lesson.data.draft)
+const docs = (await getCollection('docs'))
+  .filter((doc) => !doc.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<aside class="lesson-sidebar">
+<aside class="docs-sidebar" id="docs-sidebar">
   <div class="sidebar-header">
-    <h3 class="sidebar-title">日语教案</h3>
-    <p class="sidebar-count">共 {lessons.length} 课</p>
+    <h3 class="sidebar-title">文档</h3>
+    <p class="sidebar-count">共 {docs.length} 篇</p>
   </div>
 
   <nav class="sidebar-nav">
-    {lessons.map((lesson) => (
+    {docs.map((doc) => (
       <a
-        href={`/lessons/${lesson.id}`}
-        class:list={['sidebar-link', { active: currentSlug === lesson.id }]}
+        href={`/docs/${doc.id}`}
+        class:list={['sidebar-link', { active: currentSlug === doc.id }]}
+        title={doc.data.title}
       >
-        {lesson.data.title}
+        {doc.data.title}
       </a>
     ))}
   </nav>
 </aside>
 
 <style>
-  .lesson-sidebar {
-    position: sticky;
+    .docs-sidebar {
+    position: fixed;
     top: 64px;
-    width: 200px;
-    flex-shrink: 0;
-    border-right: 1px solid var(--border);
-    padding: 2rem 1rem;
+    left: 0;
+    width: 260px;
     height: calc(100vh - 64px);
     overflow-y: auto;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    padding: 2rem 1rem 2rem 0;
+    z-index: 1;
   }
 
   .sidebar-header {
     margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
+    padding: 0 1rem 1rem;
     border-bottom: 1px dashed var(--border);
   }
 
@@ -64,33 +67,45 @@ const lessons = (await getCollection('lessons'))
   .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.125rem;
   }
 
   .sidebar-link {
     display: block;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
     color: var(--muted);
     font-size: 0.9rem;
     text-decoration: none;
-    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 2px solid transparent;
     transition: all 0.2s ease;
   }
 
   .sidebar-link:hover {
     color: var(--accent);
     background: var(--accent-light);
+    border-left-color: var(--accent-light);
   }
 
   .sidebar-link.active {
     color: var(--accent);
     background: var(--accent-light);
+    border-left-color: var(--accent);
     font-weight: 500;
   }
 
   @media (max-width: 768px) {
-    .lesson-sidebar {
-      display: none;
+  .docs-sidebar {
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .docs-sidebar.open {
+      transform: translateX(0);
     }
   }
 </style>
