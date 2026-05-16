@@ -15,9 +15,11 @@ interface Props {
     slug: string;
     text: string;
   }>;
+  prev?: { title: string; slug: string };
+  next?: { title: string; slug: string };
 }
 
-const { title, description, date, currentSlug, headings = [] } = Astro.props;
+const { title, description, date, currentSlug, headings = [], prev, next } = Astro.props;
 
 const dateStr = date ? formatDate(date) : '';
 const hasDoc = !!currentSlug;
@@ -39,6 +41,22 @@ const hasDoc = !!currentSlug;
           <div class="lesson-content prose">
             <slot />
           </div>
+          {(prev || next) && (
+            <nav class="doc-nav">
+              {prev ? (
+                <a href={`/docs/${prev.slug}`} class="doc-nav-link">
+                  <span class="doc-nav-label">&larr; 上一篇</span>
+                  <span class="doc-nav-title">{prev.title}</span>
+                </a>
+              ) : <span />}
+              {next ? (
+                <a href={`/docs/${next.slug}`} class="doc-nav-link doc-nav-next">
+                  <span class="doc-nav-label">下一篇 &rarr;</span>
+                  <span class="doc-nav-title">{next.title}</span>
+                </a>
+              ) : <span />}
+            </nav>
+          )}
         </article>
       ) : (
         <div class="lesson lesson-empty">
@@ -131,6 +149,49 @@ const hasDoc = !!currentSlug;
 
   .lesson-content {
     line-height: 1.9;
+  }
+
+  .doc-nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .doc-nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .doc-nav-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .doc-nav-next {
+    text-align: right;
+  }
+
+  .doc-nav-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .doc-nav-title {
+    font-size: 0.9rem;
+    color: var(--fg);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* ============================================

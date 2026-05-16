@@ -16,6 +16,14 @@ type Props = Awaited<ReturnType<typeof getCollection<'docs'>>>[number];
 
 const doc = Astro.props;
 const { Content, headings } = await render(doc);
+
+const allDocs = (await getCollection('docs'))
+  .filter((d) => !d.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const currentIndex = allDocs.findIndex((d) => d.id === doc.id);
+const prev = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
+const next = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
 ---
 
 <DocsLayout
@@ -23,6 +31,8 @@ const { Content, headings } = await render(doc);
   date={doc.data.date}
   currentSlug={doc.id}
   headings={headings}
+  prev={prev ? { title: prev.data.title, slug: prev.id } : undefined}
+  next={next ? { title: next.data.title, slug: next.id } : undefined}
 >
   <Content />
 </DocsLayout>
