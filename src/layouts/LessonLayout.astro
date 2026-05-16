@@ -62,18 +62,22 @@ const dateStr = date.toLocaleDateString('zh-CN', {
     display: grid;
     grid-template-columns: 240px 1fr 240px;
     min-height: calc(100vh - 64px);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
 
   .lessons-main {
     min-width: 0;
     display: flex;
     justify-content: center;
-    padding: 2rem 3rem;
+    padding: 2rem 2.5rem;
   }
 
   .lesson {
     width: 100%;
-    max-width: 900px;
+    min-width: 600px;
+    max-width: 1000px;
   }
 
   .lesson-header {
@@ -143,6 +147,7 @@ const dateStr = date.toLocaleDateString('zh-CN', {
   @media (max-width: 1200px) {
     .lessons-page {
       grid-template-columns: 240px 1fr;
+      padding: 0 1.5rem;
     }
   }
 
@@ -150,10 +155,15 @@ const dateStr = date.toLocaleDateString('zh-CN', {
   @media (max-width: 768px) {
     .lessons-page {
       grid-template-columns: 1fr;
+      padding: 0 1rem;
     }
 
     .lessons-main {
-      padding: 1.5rem 1rem;
+      padding: 1.5rem 0;
+    }
+
+    .lesson {
+      min-width: auto;
     }
 
     .toc-toggle {
