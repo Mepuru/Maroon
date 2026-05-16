@@ -98,6 +98,16 @@
   position: relative;
 }
 
+.recent-item a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.recent-item a:hover {
+  color: var(--accent);
+}
+
 .recent-item::before {
   content: '';
   position: absolute;

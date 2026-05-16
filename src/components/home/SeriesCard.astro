@@ -36,7 +36,9 @@ const { title, description, count, countLabel, recent, link, align = 'left' } = 
     <h4 class="recent-title">最近更新</h4>
     <ul class="recent-list">
       {recent.map((item) => (
-        <li class="recent-item">{item.data.title}</li>
+        <li class="recent-item">
+          <a href={`${link}/${item.id}`}>{item.data.title}</a>
+        </li>
       ))}
     </ul>
   </div>
