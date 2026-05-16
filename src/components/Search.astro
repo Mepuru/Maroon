@@ -20,7 +20,7 @@
       pagefind = await import('/pagefind/pagefind.js');
       await pagefind.options({ excerptLength: 30 });
     } catch {
-      // Pagefind not available in dev mode
+      console.warn('Pagefind 未加载，搜索功能不可用（dev 模式正常）');
     }
   }
 
@@ -47,13 +47,17 @@
 
     const html = await Promise.all(
       items.slice(0, 10).map(async (item) => {
-        const data = await item.data();
-        return `
-          <div class="search-result-item" onclick="window.location.href='${data.url}'">
-            <div class="title">${data.meta?.title || data.url}</div>
-            <div class="excerpt">${data.excerpt}</div>
-          </div>
-        `;
+        try {
+          const data = await item.data();
+          return `
+            <div class="search-result-item" onclick="window.location.href='${data.url}'">
+              <div class="title">${data.meta?.title || data.url}</div>
+              <div class="excerpt">${data.excerpt}</div>
+            </div>
+          `;
+        } catch {
+          return '';
+        }
       })
     );
 

@@ -1,4 +1,5 @@
 ---
+import { siteConfig } from '../config/site';
 ---
 
 <style>
@@ -7,9 +8,11 @@
 
 <footer class="site-footer">
   <div>
-    &copy; {new Date().getFullYear()} 栗かな &middot; Powered by Astro
+    &copy; {new Date().getFullYear()} {siteConfig.author} &middot; Powered by Astro
   </div>
-  <div class="footer-icp">
-    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">鲁ICP备2024121288号</a>
-  </div>
+  {siteConfig.footer.icp && (
+    <div class="footer-icp">
+      <a href={siteConfig.footer.icpUrl} target="_blank" rel="noopener">{siteConfig.footer.icp}</a>
+    </div>
+  )}
 </footer>

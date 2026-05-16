@@ -1,6 +1,13 @@
 ---
 import { themes } from '../utils/themes';
+import { siteConfig } from '../config/site';
+
 const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
 ---
 
 <style>
@@ -9,13 +16,12 @@ const currentPath = Astro.url.pathname;
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="/" class="site-title">栗かな</a>
+    <a href="/" class="site-title">{siteConfig.title}</a>
     
     <nav class="nav-links">
-      <a href="/" class:list={[{ active: currentPath === '/' }]}>首页</a>
-      <a href="/blog" class:list={[{ active: currentPath.startsWith('/blog') }]}>博客</a>
-      <a href="/docs" class:list={[{ active: currentPath.startsWith('/docs') }]}>文档</a>
-      <a href="/about" class:list={[{ active: currentPath === '/about' }]}>关于</a>
+      {siteConfig.nav.map((item) => (
+        <a href={item.href} class:list={[{ active: isActive(item.href) }]}>{item.label}</a>
+      ))}
     </nav>
 
     <div class="nav-right">
@@ -54,10 +60,9 @@ const currentPath = Astro.url.pathname;
   <!-- 移动端菜单 -->
   <div class="mobile-menu" id="mobile-menu">
     <nav class="mobile-nav">
-      <a href="/" class:list={[{ active: currentPath === '/' }]}>首页</a>
-      <a href="/blog" class:list={[{ active: currentPath.startsWith('/blog') }]}>博客</a>
-      <a href="/docs" class:list={[{ active: currentPath.startsWith('/docs') }]}>文档</a>
-      <a href="/about" class:list={[{ active: currentPath === '/about' }]}>关于</a>
+      {siteConfig.nav.map((item) => (
+        <a href={item.href} class:list={[{ active: isActive(item.href) }]}>{item.label}</a>
+      ))}
     </nav>
     <div class="mobile-actions">
       <div class="mobile-theme-switcher">

@@ -252,6 +252,11 @@ const dateStr = formatDate(date);
 </style>
 
 <script>
+  let _sidebarOpen: (() => void) | null = null;
+  let _sidebarClose: (() => void) | null = null;
+  let _tocClick: (() => void) | null = null;
+  let _tocDocClick: ((e: Event) => void) | null = null;
+
   function initSidebarToggle() {
     const toggle = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('docs-sidebar');
@@ -259,23 +264,26 @@ const dateStr = formatDate(date);
 
     if (!toggle || !sidebar || !backdrop) return;
 
-    function open() {
+    if (_sidebarOpen) toggle.removeEventListener('click', _sidebarOpen);
+    if (_sidebarClose) backdrop.removeEventListener('click', _sidebarClose);
+
+    _sidebarOpen = () => {
       sidebar.classList.add('open');
       backdrop.classList.add('open');
       document.body.style.overflow = 'hidden';
-    }
+    };
 
-    function close() {
+    _sidebarClose = () => {
       sidebar.classList.remove('open');
       backdrop.classList.remove('open');
       document.body.style.overflow = '';
-    }
+    };
 
-    toggle.addEventListener('click', open);
-    backdrop.addEventListener('click', close);
+    toggle.addEventListener('click', _sidebarOpen);
+    backdrop.addEventListener('click', _sidebarClose);
 
     sidebar.addEventListener('click', (e) => {
-      if (e.target.closest('a')) close();
+      if ((e.target as Element).closest('a')) _sidebarClose?.();
     });
   }
 
@@ -285,17 +293,23 @@ const dateStr = formatDate(date);
 
     if (!toggle || !wrapper) return;
 
-    toggle.addEventListener('click', () => {
+    if (_tocClick) toggle.removeEventListener('click', _tocClick);
+    if (_tocDocClick) document.removeEventListener('click', _tocDocClick);
+
+    _tocClick = () => {
       wrapper.classList.toggle('is-overlay');
       toggle.classList.toggle('open');
-    });
+    };
 
-    document.addEventListener('click', (e) => {
-      if (!wrapper.contains(e.target) && !toggle.contains(e.target)) {
+    _tocDocClick = (e) => {
+      if (!wrapper.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
         wrapper.classList.remove('is-overlay');
         toggle.classList.remove('open');
       }
-    });
+    };
+
+    toggle.addEventListener('click', _tocClick);
+    document.addEventListener('click', _tocDocClick);
   }
 
   initSidebarToggle();
