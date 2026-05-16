@@ -62,7 +62,7 @@
   font-size: var(--font-size-tag);
   padding: 0.12rem 0.5rem;
   background: var(--accent-light);
-  color: var(--accent);
+  color: var(--fg);
   border-radius: 999px;
   font-weight: 500;
 }
