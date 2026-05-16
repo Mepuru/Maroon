@@ -20,7 +20,7 @@ export const siteConfig: SiteConfig = {
     icpUrl: 'https://beian.miit.gov.cn/',
   },
   docs: {
-    emptyText: '『四季轮回 岁岁年年』',
+    emptyText: '『 四季轮回 岁岁年年 』',
   },
 };
 

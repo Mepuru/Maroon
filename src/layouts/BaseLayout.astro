@@ -41,5 +41,13 @@ const { title = defaultTitle, description = defaultDescription, sidebar = false 
     </div>
     <Footer />
     <Search />
+    <script>
+      document.addEventListener('astro:after-swap', () => {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+      });
+    </script>
   </body>
 </html>
