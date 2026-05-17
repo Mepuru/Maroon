@@ -5,8 +5,6 @@ pubDate: 2026-01-14
 tags: [Unity, VRChat]
 ---
 
-## VRChat中根据PNG图片创建Material材质球并应用
-
 #### 本项目使用的物料及其版本
 
 - Unity 2022.3.22f1

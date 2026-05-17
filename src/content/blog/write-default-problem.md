@@ -5,8 +5,6 @@ pubDate: 2025-12-03
 tags: [Unity, Modular Avatar, VRChat]
 ---
 
-## VRChat中导入需追加FX Player组件时出现部分动画功能失效问题
-
 ### 解决办法
 
 导入新部件时（以Uchiwa为例），于右侧Inspector窗体中找到**MA Merge Animator**，并勾选**匹配Avatar的Write Default**。

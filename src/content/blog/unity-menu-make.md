@@ -5,8 +5,6 @@ pubDate: 2025-11-30
 tags: [Unity, Modular Avatar, VRChat]
 ---
 
-## VRChat中使用Modular Avatar整合各类组件菜单的一种方式
-
 #### 本项目使用的工具及其版本
 
 - Unity 2022.3.22f1

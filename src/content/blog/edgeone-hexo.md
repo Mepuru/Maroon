@@ -5,8 +5,6 @@ pubDate: 2026-02-14
 tags: [Blog, Hexo]
 ---
 
-## 迁移现有Hexo至腾讯云EdgeOne Pages
-
 ### 前言
 
 **注意** 本项目并非从头搭建Hexo并迁移至腾讯云EdgeOne Pages。如果需要搭建Hexo，需要自行寻找教程。
