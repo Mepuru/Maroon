@@ -27,13 +27,15 @@
   }
 
   .print-meta {
-    display: block !important;
-    position: fixed;
-    top: 0;
-    right: 0;
+    display: none;
+    string-set: printInfo content();
+  }
+}
+
+@page {
+  @bottom-right {
+    content: string(printInfo);
     font-size: 7.5pt;
     color: #999;
-    padding: 0.5rem 1rem;
-    z-index: 9999;
   }
 }
