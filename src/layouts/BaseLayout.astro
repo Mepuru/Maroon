@@ -49,6 +49,13 @@ const { title = defaultTitle, description = defaultDescription, sidebar = false 
           document.documentElement.setAttribute('data-theme', theme);
         }
       });
+
+      window.addEventListener('beforeprint', () => {
+        document.querySelectorAll('details').forEach(el => el.setAttribute('open', ''));
+      });
+      window.addEventListener('afterprint', () => {
+        document.querySelectorAll('details').forEach(el => el.removeAttribute('open'));
+      });
     </script>
   </body>
 </html>

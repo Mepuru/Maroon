@@ -427,12 +427,3 @@ category: "日本語"
 
 ※ 场所 + には → 主题化存在场所；否定句中将「が」替换为「も」→「誰もいない」「何もない」。否定「も」是高频考点。
 </details>
-
-<script>
-  window.addEventListener('beforeprint', () => {
-    document.querySelectorAll('details').forEach(el => el.setAttribute('open', ''));
-  });
-  window.addEventListener('afterprint', () => {
-    document.querySelectorAll('details').forEach(el => el.removeAttribute('open'));
-  });
-</script>
