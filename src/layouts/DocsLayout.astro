@@ -21,6 +21,9 @@ interface Props {
 
 const { title, description, pubDate, currentSlug, headings = [], prev, next } = Astro.props;
 
+// 截断过长的标题（双重保险：CSS text-overflow + 字符级限制）
+const truncateTitle = (s: string, max = 24) => s.length > max ? s.slice(0, max) + '…' : s;
+
 const dateStr = pubDate ? formatDate(pubDate) : '';
 const hasDoc = !!currentSlug;
 const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConfig.docs.emptyTexts.length)];
@@ -47,13 +50,13 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
               {prev ? (
                 <a href={`/docs/${prev.slug}`} class="doc-nav-link">
                   <span class="doc-nav-label">&larr; 上一篇</span>
-                  <span class="doc-nav-title">{prev.title}</span>
+                  <span class="doc-nav-title">{truncateTitle(prev.title)}</span>
                 </a>
               ) : <span />}
               {next ? (
                 <a href={`/docs/${next.slug}`} class="doc-nav-link doc-nav-next">
                   <span class="doc-nav-label">下一篇 &rarr;</span>
-                  <span class="doc-nav-title">{next.title}</span>
+                  <span class="doc-nav-title">{truncateTitle(next.title)}</span>
                 </a>
               ) : <span />}
             </nav>
@@ -330,6 +333,10 @@ const emptyText = siteConfig.docs.emptyTexts[Math.floor(Math.random() * siteConf
 
     .sidebar-toggle {
       display: flex;
+    }
+
+    .doc-nav {
+      flex-direction: column;
     }
   }
 </style>
