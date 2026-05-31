@@ -227,37 +227,11 @@ const dateStr = formatDate(pubDate);
 </style>
 
 <script>
-  let _tocClick: (() => void) | null = null;
-  let _tocDocClick: ((e: Event) => void) | null = null;
+  import { initOverlayToggle } from '../utils/toc-overlay';
 
-  function initPostToc() {
-    const toggle = document.getElementById('post-toc-toggle');
-    const toc = document.getElementById('post-toc');
-
-    if (!toggle || !toc) return;
-
-    if (_tocClick) toggle.removeEventListener('click', _tocClick);
-    if (_tocDocClick) document.removeEventListener('click', _tocDocClick);
-
-    _tocClick = () => {
-      toc.classList.toggle('is-overlay');
-      toggle.classList.toggle('open');
-    };
-
-    _tocDocClick = (e) => {
-      if (!toc.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
-        toc.classList.remove('is-overlay');
-        toggle.classList.remove('open');
-      }
-    };
-
-    toggle.addEventListener('click', _tocClick);
-    document.addEventListener('click', _tocDocClick);
-  }
-
-  initPostToc();
+  initOverlayToggle('post-toc-toggle', 'post-toc');
 
   document.addEventListener('astro:after-swap', () => {
-    initPostToc();
+    initOverlayToggle('post-toc-toggle', 'post-toc');
   });
 </script>

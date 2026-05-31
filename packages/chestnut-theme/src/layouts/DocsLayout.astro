@@ -296,10 +296,10 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
 </style>
 
 <script>
+  import { initOverlayToggle } from '../utils/toc-overlay';
+
   let _sidebarOpen: (() => void) | null = null;
   let _sidebarClose: (() => void) | null = null;
-  let _tocClick: (() => void) | null = null;
-  let _tocDocClick: ((e: Event) => void) | null = null;
 
   function initSidebarToggle() {
     const toggle = document.getElementById('sidebar-toggle');
@@ -331,36 +331,11 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
     });
   }
 
-  function initTocToggle() {
-    const toggle = document.getElementById('toc-toggle');
-    const wrapper = document.getElementById('toc-wrapper');
-
-    if (!toggle || !wrapper) return;
-
-    if (_tocClick) toggle.removeEventListener('click', _tocClick);
-    if (_tocDocClick) document.removeEventListener('click', _tocDocClick);
-
-    _tocClick = () => {
-      wrapper.classList.toggle('is-overlay');
-      toggle.classList.toggle('open');
-    };
-
-    _tocDocClick = (e) => {
-      if (!wrapper.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
-        wrapper.classList.remove('is-overlay');
-        toggle.classList.remove('open');
-      }
-    };
-
-    toggle.addEventListener('click', _tocClick);
-    document.addEventListener('click', _tocDocClick);
-  }
-
   initSidebarToggle();
-  initTocToggle();
+  initOverlayToggle('toc-toggle', 'toc-wrapper');
 
   document.addEventListener('astro:after-swap', () => {
     initSidebarToggle();
-    initTocToggle();
+    initOverlayToggle('toc-toggle', 'toc-wrapper');
   });
 </script>
