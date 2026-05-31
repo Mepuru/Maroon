@@ -1,0 +1,24 @@
+---
+interface Props {
+  author: string;
+  icp?: string;
+  icpUrl?: string;
+}
+
+const { author, icp, icpUrl } = Astro.props;
+---
+
+<style>
+  @import './Footer.css';
+</style>
+
+<footer class="site-footer">
+  <div>
+    &copy; {new Date().getFullYear()} {author} &middot; Powered by Astro
+  </div>
+  {icp && (
+    <div class="footer-icp">
+      <a href={icpUrl} target="_blank" rel="noopener">{icp}</a>
+    </div>
+  )}
+</footer>

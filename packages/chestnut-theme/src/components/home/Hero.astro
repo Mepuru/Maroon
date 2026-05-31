@@ -1,0 +1,26 @@
+---
+interface Props {
+  avatar: string;
+  author: string;
+  bio: string;
+}
+
+const { avatar, author, bio } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-avatar">
+      <img src={avatar} alt={author} />
+    </div>
+    <div class="hero-text">
+      <h1 class="hero-title">Hi, 我是{author}</h1>
+      <p class="hero-subtitle">{bio}</p>
+      <a href="/about" class="hero-link">了解更多 →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  @import './Hero.css';
+</style>
