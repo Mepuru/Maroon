@@ -9,7 +9,6 @@ export default defineConfig({
       themes: ['github-dark'],
       defaultProps: {
         wrap: true,
-        showLanguage: true,
       },
       styleOverrides: {
         borderRadius: '12px',
