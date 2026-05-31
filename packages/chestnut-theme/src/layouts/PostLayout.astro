@@ -118,17 +118,17 @@ const dateStr = formatDate(pubDate);
   }
 
   /* ============================================
-     TOC（左侧，固定于视口左边缘）
+     TOC（左侧，sticky 跟随）
      ============================================ */
   .post-toc {
     order: -1;
     position: sticky;
     top: calc(var(--header-height) + 24px);
-    width: 200px;
-    min-width: 200px;
+    width: 150px;
+    min-width: 150px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
-    padding: 0.5rem 0.75rem;
+    padding: 0.25rem 0.5rem;
     border-right: 1px solid var(--border);
   }
 
