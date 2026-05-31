@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
+import { rehypeImageCaption } from './packages/astro-maroon/src/ec-plugins/rehype-image-caption.js';
 
 export default defineConfig({
   site: 'https://kurikana.cn',
@@ -18,6 +19,9 @@ export default defineConfig({
       },
     }),
   ],
+  markdown: {
+    rehypePlugins: [rehypeImageCaption],
+  },
   vite: {
     ssr: {
       noExternal: ['astro-maroon'],

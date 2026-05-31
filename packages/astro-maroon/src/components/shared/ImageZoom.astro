@@ -1,0 +1,116 @@
+---
+/**
+ * ImageZoom — 点击图片全屏放大查看
+ *
+ * .prose 内的图片点击后打开暗色遮罩层，居中显示原图。
+ * 支持 ViewTransitions。
+ */
+---
+
+<script>
+  function initImageZoom() {
+    const images = document.querySelectorAll('.prose img');
+    if (!images.length) return;
+
+    // 创建遮罩层（只创建一次）
+    let overlay = document.getElementById('image-zoom-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'image-zoom-overlay';
+      overlay.innerHTML = `
+        <button class="zoom-close" aria-label="关闭">&times;</button>
+        <img class="zoom-image" alt="" />
+      `;
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay || e.target.classList.contains('zoom-close')) {
+          overlay.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+          overlay.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    const zoomImg = overlay.querySelector('.zoom-image');
+
+    images.forEach((img) => {
+      // 跳过已有处理的
+      if (img.dataset.zoomProcessed) return;
+      img.dataset.zoomProcessed = 'true';
+
+      img.style.cursor = 'zoom-in';
+
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoomImg.src = img.src;
+        zoomImg.alt = img.alt;
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initImageZoom);
+  } else {
+    initImageZoom();
+  }
+  document.addEventListener('astro:after-swap', initImageZoom);
+</script>
+
+<style>
+  #image-zoom-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  #image-zoom-overlay.open {
+    display: flex;
+  }
+
+  .zoom-image {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .zoom-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .zoom-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+  }
+</style>
