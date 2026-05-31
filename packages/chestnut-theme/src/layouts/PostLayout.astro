@@ -68,6 +68,12 @@ const dateStr = formatDate(pubDate);
   sidebarData={sidebarData}
 >
   <div class="post-page">
+    {headings.length > 0 && (
+      <aside class="post-toc" id="post-toc">
+        <TOC headings={headings} />
+      </aside>
+    )}
+
     <article class="post-article">
       <a href="/blog" class="back-link">&larr; 返回文章列表</a>
       <header class="post-header">
@@ -86,12 +92,6 @@ const dateStr = formatDate(pubDate);
         <slot />
       </div>
     </article>
-
-    {headings.length > 0 && (
-      <aside class="post-toc" id="post-toc">
-        <TOC headings={headings} />
-      </aside>
-    )}
   </div>
 
   {headings.length > 0 && (
@@ -107,32 +107,33 @@ const dateStr = formatDate(pubDate);
 
 <style>
   :global(.layout-wrapper) {
-    padding-left: 0.5rem;
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
   .post-page {
-    display: flex;
-    gap: 2rem;
-    position: relative;
+    min-height: calc(100vh - var(--header-height));
+    padding-left: 220px; /* 200px TOC + 20px 间距 */
   }
 
   .post-article {
-    flex: 1;
-    min-width: 0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
   }
 
   /* ============================================
-     TOC（左侧，sticky 跟随）
+     TOC（左侧，fixed 定位，不影响文档流）
      ============================================ */
   .post-toc {
-    order: -1;
-    position: sticky;
+    position: fixed;
     top: calc(var(--header-height) + 24px);
-    width: 150px;
-    min-width: 150px;
+    left: 0.25rem;
+    width: 200px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-right: 1px solid var(--border);
   }
 
@@ -189,6 +190,10 @@ const dateStr = formatDate(pubDate);
 
   /* 平板端：隐藏左侧 TOC */
   @media (max-width: 1200px) {
+    .post-page {
+      padding-left: 0;
+    }
+
     .post-toc {
       display: none;
     }
