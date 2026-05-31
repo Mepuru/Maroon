@@ -1,104 +1,119 @@
 ---
 /**
- * Mermaid 图表渲染组件
+ * 代码块增强组件
  *
- * 在文档中使用 ```mermaid 代码块即可自动渲染为图表。
- * 支持 ViewTransitions 和 图表/源码 切换。
+ * 为所有代码块添加语言标签工具栏。
+ * 当语言为 mermaid 时额外提供 图表/源码 切换和 SVG 渲染。
+ *
+ * 设计规范：
+ * - CSS 变量驱动（--border, --bg-secondary, --fg, --muted, --accent...）
+ * - hover 动画 0.2s ease
+ * - kebab-case 类名
  */
 ---
 
 <script>
   import mermaid from 'mermaid';
 
-  let initialized = false;
+  let mermaidReady = false;
 
-  function renderMermaid() {
-    const blocks = document.querySelectorAll('pre[data-language="mermaid"]');
+  function enhance() {
+    const blocks = document.querySelectorAll('pre[data-language]:not([data-enhanced])');
     if (!blocks.length) return;
 
-    if (!initialized) {
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: 'default',
-      });
-      initialized = true;
-    }
-
     blocks.forEach((pre) => {
-      if (pre.dataset.mermaidProcessed) return;
-      pre.dataset.mermaidProcessed = 'true';
-
-      const rawText = pre.textContent ?? '';
+      pre.setAttribute('data-enhanced', 'true');
+      const lang = pre.getAttribute('data-language') ?? '';
+      const isMermaid = lang.toLowerCase() === 'mermaid';
 
       // 容器
       const container = document.createElement('div');
-      container.className = 'mermaid-container';
+      container.className = 'code-block';
+      if (isMermaid) container.dataset.mermaid = '';
 
       // 工具栏
       const toolbar = document.createElement('div');
-      toolbar.className = 'mermaid-toolbar';
+      toolbar.className = 'code-toolbar';
 
       const label = document.createElement('span');
-      label.className = 'mermaid-label';
-      label.textContent = '📊 图表';
+      label.className = 'code-lang';
+      label.textContent = lang;
       toolbar.appendChild(label);
 
-      const toggleBtn = document.createElement('button');
-      toggleBtn.className = 'mermaid-toggle';
-      toggleBtn.textContent = '查看源码';
-      toggleBtn.type = 'button';
-      toolbar.appendChild(toggleBtn);
+      if (isMermaid) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'code-toggle';
+        toggleBtn.textContent = '查看图表';
+        toggleBtn.type = 'button';
+        toolbar.appendChild(toggleBtn);
+        container.dataset.view = 'code';
+      }
 
       container.appendChild(toolbar);
 
-      // 渲染区
-      const diagramDiv = document.createElement('div');
-      diagramDiv.className = 'mermaid';
-      diagramDiv.textContent = rawText.trim();
-      container.appendChild(diagramDiv);
+      // 将 pre 移入容器
+      pre.parentNode?.insertBefore(container, pre);
+      container.appendChild(pre);
 
-      // 源码区（初始隐藏）
-      const sourcePre = document.createElement('pre');
-      sourcePre.className = 'mermaid-source';
-      sourcePre.textContent = rawText.trim();
-      sourcePre.style.display = 'none';
-      container.appendChild(sourcePre);
+      // Mermaid 切换逻辑
+      if (isMermaid && toggleBtn) {
+        const rawText = pre.textContent ?? '';
 
-      // 替换
-      pre.replaceWith(container);
+        // 先显示代码，点击按钮后渲染图表
+        toggleBtn.addEventListener('click', () => {
+          const isCodeView = container.dataset.view === 'code';
 
-      // 切换逻辑
-      toggleBtn.addEventListener('click', () => {
-        const showingDiagram = sourcePre.style.display === 'none';
-        diagramDiv.style.display = showingDiagram ? 'none' : '';
-        sourcePre.style.display = showingDiagram ? '' : 'none';
-        toggleBtn.textContent = showingDiagram ? '查看图表' : '查看源码';
-      });
-    });
+          if (isCodeView) {
+            // 切换到图表视图
+            pre.style.display = 'none';
 
-    // 渲染新添加的 div.mermaid
-    const mermaidElements = document.querySelectorAll('div.mermaid:not([data-rendered])');
-    if (mermaidElements.length > 0) {
-      try {
-        mermaid.run({ querySelector: 'div.mermaid:not([data-rendered])' });
-        mermaidElements.forEach((el) => el.setAttribute('data-rendered', 'true'));
-      } catch {
-        // 渲染失败时静默处理
+            let diagramDiv = container.querySelector('.mermaid-render');
+            if (!diagramDiv) {
+              diagramDiv = document.createElement('div');
+              diagramDiv.className = 'mermaid-render';
+              diagramDiv.textContent = rawText.trim();
+              container.appendChild(diagramDiv);
+
+              if (!mermaidReady) {
+                mermaid.initialize({ startOnLoad: false, theme: 'default' });
+                mermaidReady = true;
+              }
+
+              try {
+                mermaid.run({ querySelector: '.mermaid-render' });
+              } catch { /* 静默 */ }
+            } else {
+              diagramDiv.style.display = '';
+            }
+
+            container.dataset.view = 'diagram';
+            toggleBtn.textContent = '查看源码';
+          } else {
+            // 切换到代码视图
+            const diagramDiv = container.querySelector('.mermaid-render');
+            if (diagramDiv) diagramDiv.style.display = 'none';
+            pre.style.display = '';
+            container.dataset.view = 'code';
+            toggleBtn.textContent = '查看图表';
+          }
+        });
       }
-    }
+    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderMermaid);
+    document.addEventListener('DOMContentLoaded', enhance);
   } else {
-    renderMermaid();
+    enhance();
   }
-
-  document.addEventListener('astro:after-swap', renderMermaid);
+  document.addEventListener('astro:after-swap', enhance);
 </script>
 
 <style>
-  .mermaid-container {
+  /* ============================================
+     代码块容器
+     ============================================ */
+  .code-block {
     margin: 1.5rem 0;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -106,23 +121,28 @@
     background: var(--card-bg);
   }
 
-  .mermaid-toolbar {
+  /* ============================================
+     工具栏
+     ============================================ */
+  .code-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 1rem;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    font-size: 0.8rem;
   }
 
-  .mermaid-label {
+  .code-lang {
+    font-size: 0.75rem;
+    font-weight: 600;
     color: var(--muted);
-    font-weight: 500;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
   }
 
-  .mermaid-toggle {
-    padding: 0.25rem 0.75rem;
+  .code-toggle {
+    padding: 0.2rem 0.6rem;
     font-size: 0.75rem;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -130,38 +150,36 @@
     color: var(--fg);
     cursor: pointer;
     transition: all 0.2s ease;
+    line-height: 1.4;
   }
 
-  .mermaid-toggle:hover {
+  .code-toggle:hover {
     background: var(--accent-light);
     border-color: var(--accent);
     color: var(--accent);
   }
 
-  /* 图表区：让 SVG 居中并自适应宽度 */
-  div.mermaid {
+  /* ============================================
+     Mermaid 渲染区
+     ============================================ */
+  .mermaid-render {
     padding: 1.5rem;
     display: flex;
     justify-content: center;
     overflow-x: auto;
   }
 
-  div.mermaid svg {
+  .mermaid-render svg {
     max-width: 100%;
     height: auto;
   }
 
-  /* 源码区 */
-  .mermaid-source {
-    padding: 1rem 1.5rem;
+  /* ============================================
+     移除 Shiki pre 的圆角（由容器接管）
+     ============================================ */
+  .code-block > pre {
     margin: 0;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    background: var(--code-bg);
-    color: var(--fg);
-    overflow-x: auto;
-    white-space: pre;
-    border: none;
-    border-radius: 0;
+    border-radius: 0 !important;
+    border: none !important;
   }
 </style>
