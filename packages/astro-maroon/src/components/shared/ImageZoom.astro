@@ -1,116 +1,71 @@
 ---
 /**
- * ImageZoom — 点击图片全屏放大查看
+ * ImageZoom — 基于 PhotoSwipe 的图片点击放大查看
  *
- * .prose 内的图片点击后打开暗色遮罩层，居中显示原图。
- * 支持 ViewTransitions。
+ * .prose 内的图片点击后打开 PhotoSwipe 灯箱，支持：
+ * - 滚轮缩放
+ * - 双击放大
+ * - 点击/轻触关闭
+ * - ViewTransitions 兼容
  */
 ---
 
 <script>
-  function initImageZoom() {
-    const images = document.querySelectorAll('.prose img');
-    if (!images.length) return;
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import 'photoswipe/style.css';
 
-    // 创建遮罩层（只创建一次）
-    let overlay = document.getElementById('image-zoom-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'image-zoom-overlay';
-      overlay.innerHTML = `
-        <button class="zoom-close" aria-label="关闭">&times;</button>
-        <img class="zoom-image" alt="" />
-      `;
-      document.body.appendChild(overlay);
+  let lightbox = null;
+  let pswpModule = import('photoswipe');
 
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay || e.target.classList.contains('zoom-close')) {
-          overlay.classList.remove('open');
-          document.body.style.overflow = '';
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) {
-          overlay.classList.remove('open');
-          document.body.style.overflow = '';
-        }
-      });
+  function createLightbox() {
+    // 销毁旧的
+    if (lightbox) {
+      try { lightbox.destroy(); } catch { /* ignore */ }
     }
 
-    const zoomImg = overlay.querySelector('.zoom-image');
+    const gallery = document.querySelector('.prose');
+    if (!gallery) return;
 
-    images.forEach((img) => {
-      // 跳过已有处理的
-      if (img.dataset.zoomProcessed) return;
-      img.dataset.zoomProcessed = 'true';
+    lightbox = new PhotoSwipeLightbox({
+      gallery: gallery,
+      children: 'img',
+      pswpModule: () => pswpModule,
+      padding: { top: 30, bottom: 30, left: 30, right: 30 },
+      wheelToZoom: true,
+      imageClickAction: 'close',
+      tapAction: 'close',
+      doubleTapAction: 'zoom',
+      closeTitle: '关闭',
+      zoomTitle: '放大',
+    });
 
-      img.style.cursor = 'zoom-in';
+    // 从 <img> 元素读取原始尺寸
+    lightbox.addFilter('domItemData', (itemData, element) => {
+      if (element instanceof HTMLImageElement) {
+        itemData.src = element.src;
+        itemData.w = element.naturalWidth || window.innerWidth;
+        itemData.h = element.naturalHeight || window.innerHeight;
+        itemData.msrc = element.src;
+        itemData.alt = element.alt;
+      }
+      return itemData;
+    });
 
-      img.addEventListener('click', (e) => {
-        e.stopPropagation();
-        zoomImg.src = img.src;
-        zoomImg.alt = img.alt;
-        overlay.classList.add('open');
-        document.body.style.overflow = 'hidden';
-      });
+    lightbox.init();
+  }
+
+  function setup() {
+    createLightbox();
+
+    // ViewTransitions 后重建
+    document.addEventListener('astro:after-swap', () => {
+      createLightbox();
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initImageZoom);
+    document.addEventListener('DOMContentLoaded', setup);
   } else {
-    initImageZoom();
+    setup();
   }
-  document.addEventListener('astro:after-swap', initImageZoom);
 </script>
-
-<style>
-  #image-zoom-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-  }
-
-  #image-zoom-overlay.open {
-    display: flex;
-  }
-
-  .zoom-image {
-    max-width: 95vw;
-    max-height: 95vh;
-    object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-  }
-
-  .zoom-close {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    width: 40px;
-    height: 40px;
-    font-size: 1.5rem;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-
-  .zoom-close:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.2);
-  }
-</style>

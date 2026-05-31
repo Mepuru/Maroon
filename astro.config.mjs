@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
+import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import { rehypeImageCaption } from './packages/astro-maroon/src/ec-plugins/rehype-image-caption.js';
 
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
   integrations: [
     expressiveCode({
       themes: ['github-dark'],
+      plugins: [pluginLineNumbers()],
       defaultProps: {
         wrap: true,
       },
