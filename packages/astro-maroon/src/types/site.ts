@@ -35,6 +35,7 @@ export interface SiteConfig {
   footer: {
     icp?: string;
     icpUrl?: string;
+    themeUrl?: string;
   };
   docs: {
     emptyTexts: string[];

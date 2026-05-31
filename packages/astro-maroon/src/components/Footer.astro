@@ -3,9 +3,10 @@ interface Props {
   author: string;
   icp?: string;
   icpUrl?: string;
+  themeUrl?: string;
 }
 
-const { author, icp, icpUrl } = Astro.props;
+const { author, icp, icpUrl, themeUrl } = Astro.props;
 ---
 
 <style>
@@ -14,7 +15,9 @@ const { author, icp, icpUrl } = Astro.props;
 
 <footer class="site-footer">
   <div>
-    &copy; {new Date().getFullYear()} {author} &middot; Powered by Astro
+    &copy; {new Date().getFullYear()} {author} &middot;
+    Powered by <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
+    {themeUrl && <>&nbsp;&amp; <a href={themeUrl} target="_blank" rel="noopener">Maroon</a></>}
   </div>
   {icp && (
     <div class="footer-icp">

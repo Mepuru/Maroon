@@ -104,6 +104,7 @@ export const siteConfig: SiteConfig = {
   footer: {
     icp: '鲁ICP备2024121288号',
     icpUrl: 'https://beian.miit.gov.cn/',
+    themeUrl: 'https://github.com/Mepuru/Maroon',
   },
   docs: {
     emptyTexts: [

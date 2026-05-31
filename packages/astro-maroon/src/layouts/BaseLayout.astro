@@ -62,6 +62,7 @@ const defaultTheme = Astro.props.defaultTheme ?? ctx?.defaultTheme ?? 'cream';
 const author = Astro.props.author ?? ctx?.author ?? '';
 const icp = Astro.props.icp ?? ctx?.footer?.icp;
 const icpUrl = Astro.props.icpUrl ?? ctx?.footer?.icpUrl;
+const themeUrl = Astro.props.themeUrl ?? ctx?.footer?.themeUrl;
 
 const title = Astro.props.title ?? siteTitle;
 const description = Astro.props.description ?? siteDescription;
@@ -104,7 +105,7 @@ const iconUrl = routes?.icon ?? '/favicon.svg';
         />
       )}
     </div>
-    <Footer {author} {icp} {icpUrl} />
+    <Footer {author} {icp} {icpUrl} {themeUrl} />
     <Search />
     <ImageZoom />
     <script>

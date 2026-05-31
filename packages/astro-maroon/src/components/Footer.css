@@ -11,11 +11,15 @@
   transition: border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.footer-icp a {
+.site-footer a {
   color: var(--muted);
-  font-size: 0.75rem;
+  transition: color 0.2s ease;
 }
 
-.footer-icp a:hover {
+.site-footer a:hover {
   color: var(--accent);
+}
+
+.footer-icp a {
+  font-size: 0.75rem;
 }
