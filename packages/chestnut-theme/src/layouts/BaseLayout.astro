@@ -45,6 +45,8 @@ interface Props {
     tagCount: number;
     githubUrl?: string;
   };
+  // Layout mode
+  fullWidth?: boolean;
 }
 
 // 优先级: props → Astro.locals.site（middleware 注入）→ 硬编码兜底
@@ -61,7 +63,7 @@ const icpUrl = Astro.props.icpUrl ?? ctx?.footer?.icpUrl;
 
 const title = Astro.props.title ?? siteTitle;
 const description = Astro.props.description ?? siteDescription;
-const { sidebar = false, sidebarData } = Astro.props;
+const { sidebar = false, sidebarData, fullWidth = false } = Astro.props;
 
 const routes = Astro.locals.site?.routes;
 const iconUrl = routes?.icon ?? '/favicon.svg';
@@ -84,7 +86,7 @@ const iconUrl = routes?.icon ?? '/favicon.svg';
   <body>
     <div class="print-meta" style="display:none">{siteTitle} | {Astro.url.href}</div>
     <Header siteTitle={siteTitle} nav={nav} themes={themes} />
-    <div class:list={['layout-wrapper', { wide: !sidebar }]}>
+    <div class:list={['layout-wrapper', { wide: !sidebar, 'full-width': fullWidth }]}>
       <main class="main-content">
         <slot />
       </main>

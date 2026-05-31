@@ -15,10 +15,14 @@
 }
 
 .layout-wrapper.wide {
+  display: block;
+}
+
+/* 全宽模式（DocsLayout 启用），覆盖 wide 的默认约束 */
+.layout-wrapper.full-width {
   max-width: none;
   margin: 0;
   padding: 0;
-  display: block;
 }
 
 .main-content {
