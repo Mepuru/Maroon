@@ -54,44 +54,37 @@ maroon/
 
 ## 分层架构
 
-```mermaid
-flowchart TB
-    subgraph App["App 层 (src/)"]
-        direction TB
-        Config["config/maroon.ts ⭐"]
-        Content["content/ blog/*.md<br/>docs/*.md"]
-        Pages["pages/ blog/[...slug]<br/>docs/[...slug]"]
-        MW["middleware.ts"]
-        LS["Astro.locals.site"]
+架构分为两层：**App 层** 负责配置和路由，**主题包** 负责渲染。
 
-        Config --> MW
-        Content --> Pages
-        MW --> LS
-    end
+```
+App 层 (src/)
+  ├── config/maroon.ts ⭐   ──→  页面读取
+  ├── content/blog/ docs/   ──→  pages/ 路由生成
+  ├── middleware.ts          ──→  Astro.locals.site（运行时注入）
+  └── pages/                ──→  调用主题包布局渲染
 
-    subgraph Theme["astro-maroon 主题包"]
-        direction TB
-        Layouts["layouts/"]
-        Components["components/"]
-        Styles["styles/"]
+         ↓ Astro.locals.site + props
 
-        Layouts --> BL["BaseLayout.astro"]
-        Layouts --> PL["PostLayout.astro"]
-        Layouts --> DL["DocsLayout.astro"]
-
-        Components --> PN["shared/PageNav"]
-        Components --> TOC["shared/TOC"]
-        Components --> SB["shared/Sidebar"]
-        Components --> PC["blog/PostCard"]
-        Components --> DS["docs/DocsSidebar"]
-
-        Styles --> base["base.css (变量+主题)"]
-        Styles --> prose["prose.css (排版)"]
-        Styles --> layout["layout.css (网格)"]
-    end
-
-    LS -.-> Layouts
-    Pages -.-> Layouts
+astro-maroon 主题包
+  ├── layouts/
+  │   ├── BaseLayout.astro     ← 根布局（Header + Footer + Search）
+  │   ├── PostLayout.astro     ← 博客文章
+  │   └── DocsLayout.astro     ← 文档页面
+  ├── components/
+  │   ├── shared/PageNav       ← 上下篇导航
+  │   ├── shared/TOC           ← 目录
+  │   ├── shared/Sidebar       ← 标签云 + 个人资料
+  │   ├── blog/PostCard        ← 文章卡片
+  │   └── docs/DocsSidebar     ← 文档分类侧边栏
+  ├── styles/
+  │   ├── base.css             ← CSS 变量 + 主题色
+  │   ├── prose.css            ← 排版 + 代码块 + 表格
+  │   └── layout.css           ← 网格 + 响应式断点
+  └── utils/
+      ├── content.ts           ← buildSidebarData, getTagStats
+      ├── generate-path.ts     ← URL 路径生成
+      ├── themes.ts            ← 主题列表
+      └── toc-overlay.ts       ← TOC 浮层切换
 ```
 
 ---
@@ -185,52 +178,70 @@ props → Astro.locals.site → 硬编码兜底
 
 ### 普通页面（about / 404 / 列表页）
 
-```mermaid
-flowchart LR
-    subgraph Wrapper["layout-wrapper.wide"]
-        direction LR
-        MC["main-content<br/>display: block<br/>max-width: 1200px"]
-    end
+```css
+.layout-wrapper.wide {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
 ```
 
 ### 博客列表页（有侧边栏）
 
-```mermaid
-flowchart LR
-    subgraph Grid["layout-wrapper (grid: 1fr 260px)"]
-        MC["main-content<br/>文章列表"]
-        SB["Sidebar<br/>标签云 + 个人资料"]
-    end
-    MC --> SB
+两栏网格布局——左侧文章列表，右侧侧边栏。
+
+```css
+.layout-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 2rem;
+  /* ↓ 博客页额外传给 BaseLayout: sidebar={true} */
+}
 ```
 
 ### 文章详情页（fullWidth 模式）
 
-```mermaid
-flowchart TB
-    subgraph Wrapper["layout-wrapper.full-width"]
-        direction LR
-        subgraph Post["post-page (padding-left: 220px)"]
-            Article["post-article<br/>max-width: 800px<br/>margin: 0 auto"]
-            Prose["prose (正文排版)"]
-            Article --> Prose
-        end
-        Sidebar["Sidebar<br/>标签云 + 个人资料"]
-    end
-    TOC_fixed["TOC<br/>position: fixed<br/>left: 0"] -.-> Post
+解除外层宽度限制，TOC 固定左侧，文章内容居中，侧边栏在右侧。
+
+```css
+.layout-wrapper.full-width {
+  max-width: none;
+  padding: 0 1.5rem;
+}
+
+.post-page {
+  padding-left: 220px;       /* 给左侧 TOC 让位 */
+}
+.post-article {
+  max-width: 800px;          /* 文章可读宽度 */
+  margin: 0 auto;
+}
 ```
 
 ### 文档页（fullWidth + 固定侧边栏/TOC）
 
-```mermaid
-flowchart TB
-    subgraph Wrapper["layout-wrapper.full-width"]
-        Main["docs-main<br/>margin-left: 260px<br/>margin-right: 200px"]
-        DocArticle["doc-article<br/>max-width: 800px"]
-        Main --> DocArticle
-    end
-    DSidebar["DocsSidebar<br/>position: fixed, left: 0<br/>width: 260px"] -.-> Main
-    TOC["toc-wrapper<br/>position: fixed, right: 0<br/>width: 200px"] -.-> Main
+全宽布局，侧边栏和 TOC 固定定位，文档内容区域用 margin 避开两侧固定栏。
+
+```css
+.docs-sidebar {
+  position: fixed;
+  left: 0;
+  width: 260px;
+}
+.docs-main {
+  margin-left: 260px;       /* 避开左侧侧边栏 */
+  margin-right: 200px;      /* 避开右侧 TOC */
+}
+.doc-article {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.toc-wrapper {
+  position: fixed;
+  right: 0;
+  width: 200px;
+}
 ```
 
 ### 响应式断点
