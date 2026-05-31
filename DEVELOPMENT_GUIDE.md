@@ -233,29 +233,143 @@ style: 移除未使用的 import 和 prop
 
 ```
 src/
-├── components/       # 可复用 UI 组件（PascalCase）
-│   ├── blog/         # 博客相关组件
-│   ├── docs/         # 文档相关组件
-│   ├── home/         # 首页组件
-│   ├── shared/       # 通用组件（Sidebar, TOC）
-│   ├── Header.astro  # 导航栏（含主题切换 + 移动端菜单）
-│   ├── Footer.astro  # 页脚
-│   └── Search.astro  # Pagefind 搜索弹窗
-├── config/           # 站点配置（site.ts, series.ts）
-├── content/          # Markdown 内容
-├── content.config.ts # 内容 Zod Schema
-├── layouts/          # 页面布局包装器
-├── pages/            # 路由页面
-├── styles/           # 全局样式
-├── types/            # TypeScript 类型定义
-└── utils/            # 工具函数
+├── config/           # 站点配置
+│   ├── site.ts       # 站点元数据、导航、社交链接
+│   ├── series.ts     # 首页系列卡片配置
+│   └── routing.ts    # URL 路由模板集中管理
+├── content/          # 内容框架层
+│   ├── registry.ts   # 内容类型声明式注册表
+│   ├── utils.ts      # 共享查询工具（标签统计、sidebar 构造、文档分组）
+│   ├── blog/         # Markdown 文章
+│   ├── docs/         # Markdown 文档
+│   └── pages/        # Markdown 独立页面
+├── content.config.ts # Astro content collections + Zod schema
+├── middleware.ts     # Astro middleware — 全局配置注入 Astro.locals
+├── env.d.ts         # Astro.locals.site 类型声明
+├── pages/            # 路由页面（极薄层，只做路由分发）
+│   ├── index.astro
+│   ├── about.astro
+│   ├── 404.astro
+│   ├── blog/
+│   │   ├── index.astro
+│   │   └── [...slug].astro
+│   ├── docs/
+│   │   ├── index.astro
+│   │   └── [...slug].astro
+│   └── tags/
+│       └── [tag].astro
+└── packages/
+    └── chestnut-theme/    # 可发布的独立主题包
+        ├── src/
+        │   ├── components/  # 纯 UI 组件（不自知内容结构）
+        │   ├── layouts/     # 布局包装器（从 Astro.locals.site 读取全局配置）
+        │   ├── styles/      # CSS 变量主题系统
+        │   ├── types/       # 组件 Props 类型
+        │   └── utils/       # 工具函数（formatDate, readingTime, themes）
+        └── package.json
 ```
+
+---
+
+## 内容类型注册表（Content Registry）
+
+所有内容类型集中在 `src/content/registry.ts` 声明。新增一个内容类型的流程：
+
+### 新内容类型添加流程
+
+1. **Zod Schema** — 在 `src/content.config.ts` 中定义 `defineCollection` + schema
+2. **注册声明** — 在 `src/content/registry.ts` 的 `contentRegistry` 数组加一条配置
+3. **路由文件** — 在 `src/pages/` 下创建 `[typename]/[...slug].astro` 和 `index.astro`
+4. **可选：系列配置** — 如需在首页展示，在 `src/config/series.ts` 加一条
+
+```typescript
+// 示例：在 registry.ts 中注册 "笔记" 类型
+{
+  id: 'notes',
+  label: '笔记',
+  routeKey: 'notes',       // 对应 routing.ts 中的 routes
+  sidebarIncluded: true,   // 是否显示侧边栏
+  series: {
+    description: '学习笔记',
+    countLabel: '篇笔记',
+    align: 'left',
+    sortField: 'pubDate',
+    sortOrder: 'desc',
+  },
+}
+```
+
+### 路由文件编写规范
+
+页面文件保持极薄：
+
+```astro
+---
+// 只做三件事：加载数据、构造 props、渲染 layout
+import DocsLayout from '@kurikana/astro-theme/layouts/DocsLayout.astro';
+import { groupDocsByCategory } from '../../content/utils';
+
+const allDocs = await getCollection('docs');
+const { publishedDocs, categories } = groupDocsByCategory(allDocs);
+---
+
+<DocsLayout
+  title="文档"
+  categories={categories}
+  totalCount={publishedDocs.length}
+  // 全局配置由 Astro.locals.site 自动注入，无需手动传参
+>
+```
+
+---
+
+## Middleware 机制
+
+`src/middleware.ts` 在每次请求时自动将全局站点配置注入 `Astro.locals.site`：
+
+| 字段 | 来源 | 说明 |
+|------|------|------|
+| `title`, `description`, `author` | `src/config/site.ts` | 站点元数据 |
+| `nav` | `src/config/site.ts` | 导航链接 |
+| `themes` | `@kurikana/astro-theme/utils/themes` | 主题列表 |
+| `defaultTheme` | `@kurikana/astro-theme/utils/themes` | 默认主题 |
+| `routes` | `src/config/routing.ts` | URL 路由表 |
+
+Layout 优先读取 `Astro.locals.site`（由 middleware 注入），也接受 props 传入作为覆盖（向后兼容）。
+
+---
+
+## 共享工具函数
+
+位于 `src/content/utils.ts`：
+
+| 函数 | 功能 | 消除的重复 |
+|------|------|-----------|
+| `getTagStats(posts)` | 提取标签并统计频次 | blog 三处重复 |
+| `buildSidebarData(siteConfig, posts)` | 构造侧边栏数据 | blog 三处重复 |
+| `groupDocsByCategory(docs)` | 按 category 分组文档 | docs 两处重复 |
+| `getPublishedPosts()` | 获取已发布文章 | 统一入口 |
+| `getPublishedDocs()` | 获取已发布文档 | 统一入口 |
+
+---
+
+## 主题包 URL 解耦
+
+主题包组件通过可选 props 避免硬编码 URL：
+
+| 组件 | Prop | 默认值 |
+|------|------|--------|
+| `PostCard` | `itemUrl?: string` | `/blog/{slug}` |
+| `DocsSidebar` | `docUrlPrefix?: string` | `/docs` |
+| `Sidebar` | `tagUrlPrefix?: string` | `/tags` |
+
+外部站点可以传入自定义 URL 覆盖默认路径，主题包不依赖站点内容结构。
 
 ---
 
 ## 主题添加流程
 
-1. `src/utils/themes.ts` 添加 `{ id, name }`
-2. `src/styles/base.css` 添加 `[data-theme="xxx"]` 变量块
+1. `packages/chestnut-theme/src/utils/themes.ts` 添加 `{ id, name }`
+2. `packages/chestnut-theme/src/styles/base.css` 添加 `[data-theme="xxx"]` 变量块
 
 CSS 变量必须覆盖：`--bg`, `--fg`, `--accent`, `--accent-light`, `--border`, `--muted`, `--card-bg`, `--code-bg`, `--header-bg`, `--search-bg`, `--shadow-*`, `--gradient-*`, `--theme-label`, `--radius-*`。
