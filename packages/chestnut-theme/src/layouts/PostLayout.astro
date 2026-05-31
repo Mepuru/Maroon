@@ -8,25 +8,17 @@ interface SidebarTag {
   count: number;
 }
 
-interface NavItem {
-  href: string;
-  label: string;
-}
-
-interface ThemeItem {
-  id: string;
-  name: string;
-}
-
 interface Props {
-  siteTitle: string;
-  siteDescription: string;
-  nav: NavItem[];
-  themes: ThemeItem[];
-  defaultTheme: string;
-  author: string;
+  // Site-wide config (optional — fallback to Astro.locals.site)
+  siteTitle?: string;
+  siteDescription?: string;
+  nav?: Array<{ href: string; label: string }>;
+  themes?: Array<{ id: string; name: string }>;
+  defaultTheme?: string;
+  author?: string;
   icp?: string;
   icpUrl?: string;
+  // Post-specific
   sidebar: true;
   sidebarData: {
     avatar: string;
@@ -50,8 +42,6 @@ interface Props {
 }
 
 const {
-  siteTitle, siteDescription, nav, themes, defaultTheme,
-  author, icp, icpUrl,
   sidebarData,
   title, description, pubDate, tags = [], readingTime, headings = [],
 } = Astro.props;
@@ -60,9 +50,7 @@ const dateStr = formatDate(pubDate);
 ---
 
 <BaseLayout
-  {siteTitle} {siteDescription} {nav} {themes} {defaultTheme}
-  {author} {icp} {icpUrl}
-  title={`${title} - ${siteTitle}的博客`}
+  title={`${title} - ${Astro.locals.site?.title ?? Astro.props.siteTitle ?? ''}的博客`}
   description={description}
   sidebar={true}
   sidebarData={sidebarData}

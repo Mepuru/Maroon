@@ -22,14 +22,13 @@ interface ThemeItem {
 }
 
 interface Props {
-  // Site-wide config
-  siteTitle: string;
-  siteDescription: string;
-  nav: NavItem[];
-  themes: ThemeItem[];
-  defaultTheme: string;
-  // Footer
-  author: string;
+  // Site-wide config (all optional — fallback to Astro.locals.site)
+  siteTitle?: string;
+  siteDescription?: string;
+  nav?: NavItem[];
+  themes?: ThemeItem[];
+  defaultTheme?: string;
+  author?: string;
   icp?: string;
   icpUrl?: string;
   // Page-level
@@ -48,12 +47,21 @@ interface Props {
   };
 }
 
-const {
-  siteTitle, siteDescription, nav, themes, defaultTheme,
-  author, icp, icpUrl,
-  title = siteTitle, description = siteDescription,
-  sidebar = false, sidebarData,
-} = Astro.props;
+// 优先从 Astro.locals.site 读取全局配置（middleware 注入），props 优先级更高
+const ctx = Astro.locals.site;
+
+const siteTitle = Astro.props.siteTitle ?? ctx?.title ?? '';
+const siteDescription = Astro.props.siteDescription ?? ctx?.description ?? '';
+const nav = Astro.props.nav ?? ctx?.nav ?? [];
+const themes = Astro.props.themes ?? ctx?.themes ?? [];
+const defaultTheme = Astro.props.defaultTheme ?? ctx?.defaultTheme ?? 'cream';
+const author = Astro.props.author ?? ctx?.author ?? '';
+const icp = Astro.props.icp ?? ctx?.footer?.icp;
+const icpUrl = Astro.props.icpUrl ?? ctx?.footer?.icpUrl;
+
+const title = Astro.props.title ?? siteTitle;
+const description = Astro.props.description ?? siteDescription;
+const { sidebar = false, sidebarData } = Astro.props;
 ---
 
 <!doctype html>

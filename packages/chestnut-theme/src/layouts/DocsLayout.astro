@@ -4,16 +4,6 @@ import DocsSidebar from '../components/docs/DocsSidebar.astro';
 import TOC from '../components/shared/TOC.astro';
 import { formatDate } from '../utils/date';
 
-interface NavItem {
-  href: string;
-  label: string;
-}
-
-interface ThemeItem {
-  id: string;
-  name: string;
-}
-
 interface DocNavItem {
   slug: string;
   title: string;
@@ -25,13 +15,13 @@ interface DocCategory {
 }
 
 interface Props {
-  // BaseLayout site-wide config
-  siteTitle: string;
-  siteDescription: string;
-  nav: NavItem[];
-  themes: ThemeItem[];
-  defaultTheme: string;
-  author: string;
+  // BaseLayout site-wide config (optional — fallback to Astro.locals.site)
+  siteTitle?: string;
+  siteDescription?: string;
+  nav?: Array<{ href: string; label: string }>;
+  themes?: Array<{ id: string; name: string }>;
+  defaultTheme?: string;
+  author?: string;
   icp?: string;
   icpUrl?: string;
   // Docs-specific
@@ -55,8 +45,6 @@ interface Props {
 }
 
 const {
-  siteTitle, siteDescription, nav, themes, defaultTheme,
-  author, icp, icpUrl,
   title, description, pubDate,
   currentSlug, headings = [], prev, next,
   categories, totalCount, uncategorized = [],
@@ -72,8 +60,6 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
 ---
 
 <BaseLayout
-  {siteTitle} {siteDescription} {nav} {themes} {defaultTheme}
-  {author} {icp} {icpUrl}
   title={`${title} - 文档`}
   description={description}
 >
