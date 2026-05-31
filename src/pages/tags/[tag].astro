@@ -3,6 +3,7 @@ import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
 // 全局配置由 Astro.locals.site 注入
 import { getCollection } from 'astro:content';
+import '../../styles/layout.css';
 import { getPublishedPosts, buildSidebarData } from '../../content/utils';
 
 export async function getStaticPaths() {

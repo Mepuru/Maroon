@@ -1,4 +1,4 @@
-import type { SiteConfig } from '../types/site';
+import type { SiteConfig } from '@kurikana/astro-theme/types/site';
 
 export const siteConfig: SiteConfig = {
   title: '栗かな',

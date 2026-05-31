@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
+import '../../styles/layout.css';
 import { getPublishedPosts, buildSidebarData } from '../../content/utils';
 
 const posts = await getPublishedPosts();

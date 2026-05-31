@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import PostLayout from '@kurikana/astro-theme/layouts/PostLayout.astro';
 import { estimateReadingTime } from '@kurikana/astro-theme/utils/reading-time';
+import '../../styles/layout.css';
 import { getPublishedPosts, buildSidebarData } from '../../content/utils';
 
 export async function getStaticPaths() {

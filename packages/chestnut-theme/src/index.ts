@@ -11,7 +11,6 @@ export type {
   SortOrder,
 } from './types/series';
 export type {
-  BlogPost,
   PostCardProps,
   PostData,
 } from './types/blog';
@@ -27,6 +26,10 @@ export { formatDate } from './utils/date';
 export { estimateReadingTime } from './utils/reading-time';
 export { themes, defaultTheme } from './utils/themes';
 export type { Theme } from './utils/themes';
+
+// Content utilities
+export { getTagStats, buildSidebarData, groupDocsByCategory } from './utils/content';
+export type { TagCount, SidebarData, DocNavItem, DocCategory, DocsGroupResult } from './utils/content';
 
 // Styles — imported for side effects when needed
 // import './styles/global.css';
