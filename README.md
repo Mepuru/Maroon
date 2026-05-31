@@ -13,17 +13,18 @@
 
 ## 简介
 
-个人博客 + 文档站点，记录技术探索、日语学习和生活感悟。从 Hexo 迁移至 Astro，采用类 VitePress/Starlight 的文档布局。
+个人博客 + 文档站点，记录技术探索、日语学习和生活感悟。采用 Monorepo 结构，核心主题 `@kurikana/astro-theme` 作为独立 npm workspace 包，与内容解耦。
 
 ## 特性
 
 - **Astro 5.x** — 内容驱动，零 JS 首屏
+- **Monorepo 架构** — 主题包独立，可发布复用
 - **ViewTransitions** — 页面间平滑 crossfade 过渡
 - **三套主题** — 奶油 / 樱花 / 星空，CSS 变量驱动，localStorage 记忆
-- **博客系统** — Markdown 文章、标签筛选、阅读时间
+- **博客系统** — Markdown 文章、标签筛选、阅读时间、上下篇导航
 - **文档系统** — 侧边栏固定 + TOC 固定、分类折叠、上下篇导航
 - **全文搜索** — Pagefind 构建时索引，零运行时依赖
-- **配置驱动** — 个人信息/导航/主题文案集中在 `src/config/site.ts`
+- **配置驱动** — 个人信息/导航集中在 `src/config/site.ts`
 - **响应式** — 桌面三列 / 平板双列 / 手机抽屉式侧边栏
 
 ## 本地开发
@@ -33,41 +34,42 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # 构建 + Pagefind 索引
 npm run preview    # 预览构建结果
-npm run typecheck  # 类型检查（需先安装 @astrojs/check）
 ```
 
 ## 项目结构
 
 ```
-src/
-├── components/           # 组件
-│   ├── blog/PostCard     # 博客卡片
-│   ├── docs/DocsSidebar  # 文档侧边栏（分类折叠）
-│   ├── home/             # 首页 Hero / SeriesCard
-│   ├── shared/           # Sidebar（标签云）、TOC（目录）
-│   ├── Header.astro      # 导航栏 + 主题切换
-│   ├── Footer.astro      # 页脚
-│   └── Search.astro      # Pagefind 搜索
-├── config/
-│   ├── site.ts           # ⭐ 站点配置（单一修改入口）
-│   └── series.ts         # 系列配置（博客/文档板块）
-├── content/              # Markdown 内容
-│   ├── blog/             # 博客文章
-│   ├── docs/             # 文档文章（含架构文档）
-│   └── pages/            # 独立页面
-├── content.config.ts     # Zod Schema
-├── layouts/
-│   ├── BaseLayout.astro  # 根布局（ViewTransitions）
-│   ├── DocsLayout.astro  # 文档布局（三列固定）
-│   └── PostLayout.astro  # 博客文章布局
-├── pages/                # 路由
-│   ├── index.astro       # 首页
-│   ├── blog/             # 博客列表 + 详情
-│   ├── docs/             # 文档首页 + 详情
-│   └── tags/[tag].astro  # 标签筛选
-├── styles/               # 全局样式（CSS 变量 + 主题色）
-├── types/                # TypeScript 类型
-└── utils/                # 工具函数
+chestnut-astro/
+├── packages/
+│   └── chestnut-theme/        # @kurikana/astro-theme — 独立主题包
+│       ├── src/
+│       │   ├── components/    # UI 组件（Header, Footer, PostCard, Sidebar, TOC...）
+│       │   ├── layouts/       # BaseLayout, PostLayout, DocsLayout
+│       │   ├── styles/        # CSS 变量、prose 排版、theme-switcher
+│       │   ├── types/         # SiteConfig, SeriesConfig, PostCardProps 等公共类型
+│       │   └── utils/         # formatDate, estimateReadingTime, getTagStats 等工具
+│       └── package.json
+│
+├── src/                       # 主应用 — 胶水层
+│   ├── config/
+│   │   ├── site.ts            # ⭐ 站点配置（单一修改入口）
+│   │   ├── series.ts          # 系列配置（博客/文档板块）
+│   │   └── routing.ts         # URL 路由模板
+│   ├── content/               # Markdown 内容
+│   │   ├── blog/              # 博客文章
+│   │   ├── docs/              # 文档文章
+│   │   ├── pages/             # 独立页面
+│   │   └── utils.ts           # 转发表层 + getPublishedPosts/Docs
+│   ├── content.config.ts      # Zod Schema
+│   ├── middleware.ts           # 配置注入 Astro.locals.site
+│   ├── pages/                 # 路由（极薄胶水层）
+│   │   ├── blog/[...slug].astro  # 博客详情
+│   │   ├── docs/[...slug].astro  # 文档详情
+│   │   └── ...
+│   └── styles/
+│       └── layout.css         # 应用层布局样式
+├── tsconfig.json              # 路径别名映射到主题包
+└── package.json               # workspaces: ["packages/*"]
 ```
 
 ## 配置
@@ -88,50 +90,11 @@ export const siteConfig = {
   ],
   social: { github: 'https://github.com/Mepuru' },
   footer: { icp: '鲁ICP备...', icpUrl: 'https://...' },
-  docs: {
-    emptyTexts: [
-      '『 四季轮回 岁岁年年 』',
-      '『 今天吃什么呢？ 』\n『 是啊，吃什么呢？ 』',
-      '『 到处点一点试试看？ 』',
-    ],
-  },
+  docs: { emptyTexts: [...] },
 };
 ```
 
-加导航页、改昵称、换头像 —— 只改这一个文件。
-
-## 系列配置
-
-首页的「博客」和「文档」两个系列卡片在 `src/config/series.ts` 中配置：
-
-```ts
-export const seriesConfig = [
-  {
-    id: 'blog',
-    title: '博客',
-    description: '散装的技术与生活记录',
-    link: '/blog',
-    collection: 'blog',
-    align: 'left',
-    sortField: 'pubDate',
-    sortOrder: 'desc',
-  },
-  {
-    id: 'docs',
-    title: '文档',
-    description: '技术文档与知识整理',
-    link: '/docs',
-    collection: 'docs',
-    align: 'right',
-    sortField: 'pubDate',
-    sortOrder: 'desc',
-  },
-];
-```
-
-- `collection` 对应 `src/content/` 下的目录名
-- `align` 控制卡片在首页的左/右对齐
-- `sortField` 和 `sortOrder` 控制排序
+加导航页、改昵称、换头像——只改这一个文件。配置通过 `src/middleware.ts` 自动注入 `Astro.locals.site`，所有布局组件直接读取。
 
 ## 写博客
 
@@ -159,49 +122,13 @@ draft: false
 title: 文档标题
 pubDate: 2026-05-16
 category: Astro    # 可选，侧边栏按此分组折叠
-draft: false       # 可选，true 时构建自动过滤
+draft: false
 ---
 ```
-
-## 独立页面
-
-在 `src/content/pages/` 下创建 `.md` 文件，然后在 `src/pages/` 下创建对应的路由页面：
-
-```yaml
----
-title: 关于我
----
-```
-
-路由页面示例（`src/pages/about.astro`）：
-
-```astro
----
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getEntry, render } from 'astro:content';
-
-const page = await getEntry('pages', 'about');
-const { Content } = await render(page);
----
-
-<BaseLayout title={`{page.data.title} - 栗かな的博客`}>
-  <div class="page-header">
-    <h1>{page.data.title}</h1>
-  </div>
-  <div class="prose">
-    <Content />
-  </div>
-</BaseLayout>
-```
-
-## 添加新主题
-
-1. `src/utils/themes.ts` 添加 `{ id, name }`
-2. `src/styles/base.css` 添加对应 `[data-theme="xxx"]` 变量块
 
 ## 架构文档
 
-完整的代码架构说明在 `/docs/architecture`（即 `src/content/docs/architecture.md`），供后续开发者和 AI 参考。
+完整的代码架构说明在 [/docs/architecture](/docs/architecture)（即 `src/content/docs/architecture.md`），包含数据流、组件层级、主题系统详解和给后续开发者的规则。
 
 ## 技术栈
 
@@ -211,6 +138,7 @@ const { Content } = await render(page);
 | 搜索 | Pagefind |
 | 语言 | TypeScript |
 | 样式 | CSS Custom Properties |
+| 包管理 | npm workspaces |
 | 部署 | EdgeOne Pages |
 
 ## 联系方式
