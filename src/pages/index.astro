@@ -1,11 +1,11 @@
 ---
-import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
-import Hero from '@kurikana/astro-theme/components/home/Hero.astro';
-import SeriesSection from '@kurikana/astro-theme/components/home/SeriesSection.astro';
-import SeriesCard from '@kurikana/astro-theme/components/home/SeriesCard.astro';
+import BaseLayout from 'astro-maroon/layouts/BaseLayout.astro';
+import Hero from 'astro-maroon/components/home/Hero.astro';
+import SeriesSection from 'astro-maroon/components/home/SeriesSection.astro';
+import SeriesCard from 'astro-maroon/components/home/SeriesCard.astro';
 import { generateSeriesConfigs } from '../content/registry';
 import { getPublishedContent } from '../content/utils';
-import '@kurikana/astro-theme/styles/home.css';
+import 'astro-maroon/styles/home.css';
 
 const seriesConfig = generateSeriesConfigs();
 

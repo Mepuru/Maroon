@@ -13,7 +13,7 @@
 
 ## 简介
 
-个人博客 + 文档站点，记录技术探索、日语学习和生活感悟。采用 Monorepo 结构，核心主题 `@kurikana/astro-theme` 作为独立 npm workspace 包，与内容解耦。
+个人博客 + 文档站点，记录技术探索、日语学习和生活感悟。采用 Monorepo 结构，核心主题 `astro-maroon` 作为独立 npm workspace 包，与内容解耦。
 
 ## 特性
 
@@ -42,7 +42,7 @@ npm run preview    # 预览构建结果
 ```
 chestnut-astro/
 ├── packages/
-│   └── chestnut-theme/        # @kurikana/astro-theme — 独立主题包
+│   └── chestnut-theme/        # astro-maroon — 独立主题包
 │       ├── src/
 │       │   ├── components/    # UI 组件（Header, Footer, PostCard, Sidebar, PageNav, TOC...）
 │       │   ├── layouts/       # BaseLayout, PostLayout, DocsLayout

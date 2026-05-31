@@ -1,8 +1,8 @@
 {
-  "name": "@kurikana/astro-theme",
+  "name": "astro-maroon",
   "version": "0.1.0",
   "type": "module",
-  "description": "KuriKana Astro blog & docs theme",
+  "description": "Maroon — warm Astro blog & docs theme",
   "exports": {
     ".": "./src/index.ts",
     "./components/*": "./src/components/*",

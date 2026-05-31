@@ -41,7 +41,7 @@ import type { Props } from '../types';
 
 **原则：**
 - CSS 独立文件管理，不内联 `<style>` 标签（除非极简单的 1–3 条样式）
-- 组件 props 优先用类型接口，定义在组件内或从 `@kurikana/astro-theme/types` 导入
+- 组件 props 优先用类型接口，定义在组件内或从 `astro-maroon/types` 导入
 - 每个组件只做一件事
 
 ---
@@ -57,16 +57,16 @@ import { ViewTransitions } from 'astro:transitions';
 import { getCollection, render } from 'astro:content';
 
 // 2. 主题包组件/布局
-import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
+import BaseLayout from 'astro-maroon/layouts/BaseLayout.astro';
 
 // 3. 本地工具函数
 import { buildBlogSidebar, computePrevNext } from '../../content/utils';
 
 // 4. 类型
-import type { PostCardProps } from '@kurikana/astro-theme/types';
+import type { PostCardProps } from 'astro-maroon/types';
 
 // 5. 样式
-import '@kurikana/astro-theme/styles/layout.css';
+import 'astro-maroon/styles/layout.css';
 ---
 ```
 
@@ -130,7 +130,7 @@ transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
 - **严格模式** — `tsconfig.json` 继承 `astro/tsconfigs/strict`
 - **Props 接口** — 尽量先用 `interface` 而非 `type`，仅在需要联合/交叉时用 `type`
 - **避免 `any`** — 优先 `unknown` + 类型收窄
-- **公共类型** — 放在 `packages/chestnut-theme/src/types/` 中，通过 `@kurikana/astro-theme/types` 导入
+- **公共类型** — 放在 `packages/chestnut-theme/src/types/` 中，通过 `astro-maroon/types` 导入
 - **组件 Props** — 定义在组件内或从主题包导入：
 
 ```astro
@@ -300,7 +300,7 @@ Layout 读取优先级：`props → Astro.locals.site → 硬编码兜底`
 ```
 chestnut-astro/
 ├── packages/
-│   └── chestnut-theme/        # @kurikana/astro-theme — 独立主题包
+│   └── chestnut-theme/        # astro-maroon — 独立主题包
 │       ├── src/
 │       │   ├── components/     # UI 组件
 │       │   │   ├── blog/       #   PostCard
@@ -383,9 +383,9 @@ export const collections = { blog, docs, pages, notes };
 **`src/pages/notes/index.astro`**
 ```astro
 ---
-import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
-import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
-import '@kurikana/astro-theme/styles/layout.css';
+import BaseLayout from 'astro-maroon/layouts/BaseLayout.astro';
+import PostCard from 'astro-maroon/components/blog/PostCard.astro';
+import 'astro-maroon/styles/layout.css';
 import { getPublishedPosts } from '../../content/utils';
 
 const posts = await getPublishedPosts();
@@ -400,9 +400,9 @@ const posts = await getPublishedPosts();
 ```astro
 ---
 import { getCollection, render } from 'astro:content';
-import PostLayout from '@kurikana/astro-theme/layouts/PostLayout.astro';
-import { estimateReadingTime } from '@kurikana/astro-theme/utils/reading-time';
-import '@kurikana/astro-theme/styles/layout.css';
+import PostLayout from 'astro-maroon/layouts/PostLayout.astro';
+import { estimateReadingTime } from 'astro-maroon/utils/reading-time';
+import 'astro-maroon/styles/layout.css';
 import { buildBlogSidebar, computePrevNext } from '../../content/utils';
 
 export async function getStaticPaths() { /* 同 blog */ }

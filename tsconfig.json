@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@kurikana/astro-theme": ["./packages/chestnut-theme/src"],
-      "@kurikana/astro-theme/*": ["./packages/chestnut-theme/src/*"]
+      "astro-maroon": ["./packages/astro-maroon/src"],
+      "astro-maroon/*": ["./packages/astro-maroon/src/*"]
     }
   }
 }

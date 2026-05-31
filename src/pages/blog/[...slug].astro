@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
-import PostLayout from '@kurikana/astro-theme/layouts/PostLayout.astro';
-import { estimateReadingTime } from '@kurikana/astro-theme/utils/reading-time';
+import PostLayout from 'astro-maroon/layouts/PostLayout.astro';
+import { estimateReadingTime } from 'astro-maroon/utils/reading-time';
 import { buildBlogSidebar, computePrevNext } from '../../content/utils';
 
 export async function getStaticPaths() {

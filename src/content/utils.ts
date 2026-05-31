@@ -1,4 +1,4 @@
-import type { SortField, SortOrder } from '@kurikana/astro-theme/types';
+import type { SortField, SortOrder } from 'astro-maroon/types';
 import { getCollection } from 'astro:content';
 import { generateTaggableCollections } from './registry';
 
@@ -6,14 +6,14 @@ import {
   getTagStats,
   buildSidebarData,
   groupDocsByCategory,
-} from '@kurikana/astro-theme/utils/content';
+} from 'astro-maroon/utils/content';
 export type {
   TagCount,
   SidebarData,
   DocNavItem,
   DocCategory,
   DocsGroupResult,
-} from '@kurikana/astro-theme/utils/content';
+} from 'astro-maroon/utils/content';
 export { getTagStats, buildSidebarData, groupDocsByCategory };
 
 // ============================================================

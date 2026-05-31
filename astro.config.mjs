@@ -10,7 +10,7 @@ export default defineConfig({
   },
   vite: {
     ssr: {
-      noExternal: ['@kurikana/astro-theme'],
+      noExternal: ['astro-maroon'],
     },
   },
 });

@@ -14,7 +14,7 @@ declare namespace App {
       docs: { emptyTexts: string[] };
       themes: Array<{ id: string; name: string }>;
       defaultTheme: string;
-      routes: import('@kurikana/astro-theme/types/site').RoutesConfig;
+      routes: import('astro-maroon/types/site').RoutesConfig;
     };
   }
 }

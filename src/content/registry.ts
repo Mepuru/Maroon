@@ -5,7 +5,7 @@
  * URL 路由、首页系列卡片、导航栏入口自动推导生成。
  */
 
-import type { SortField, SortOrder } from '@kurikana/astro-theme/types';
+import type { SortField, SortOrder } from 'astro-maroon/types';
 
 export interface ContentTypeConfig {
   /** 内容类型标识，对应 src/content/ 下的目录名 */

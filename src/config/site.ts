@@ -1,4 +1,4 @@
-import type { SiteConfig } from '@kurikana/astro-theme/types/site';
+import type { SiteConfig } from 'astro-maroon/types/site';
 import { generateNavItems } from '../content/registry';
 
 export const siteConfig: SiteConfig = {
