@@ -17,11 +17,11 @@ tags: [Unity, Modular Avatar, VRChat]
 >
 > 在启用 Write Defaults 的情况下下：
 >
-> 当切换到 Hat On 时，帽子会被打开 
+> 当切换到 Hat On 时，帽子会被打开
 > 当切换回 Empty State 状态时，帽子会被关闭（因为帽子被写回了默认状态）
 > 在禁用 Write Defaults 的情况下：
 >
-> 当切换到Hat On时，帽子会被打开 
+> 当切换到Hat On时，帽子会被打开
 > 当切换到Empty State时，帽子会保持开启状态（因为没有动画将其关闭，也没有写回默认状态）
 
 ![Ash中的Animator](/images/write-default-problem/dc119d02a970012d4747acfdcee549ab.png)

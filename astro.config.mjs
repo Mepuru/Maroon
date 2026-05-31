@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 
-
 export default defineConfig({
   site: 'https://kurikana.cn',
   output: 'static',

@@ -54,7 +54,6 @@ const {
 
 // 截断过长的标题
 
-
 const routes = Astro.locals.site?.routes;
 const docsPattern = routes?.docs?.pattern ?? '/docs/[slug]';
 
@@ -162,8 +161,6 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
   .doc-content {
     line-height: 1.9;
   }
-
-
 
   /* ============================================
      TOC（右侧，固定于视口右边缘）
@@ -290,7 +287,6 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
     .sidebar-toggle {
       display: flex;
     }
-
 
   }
 </style>

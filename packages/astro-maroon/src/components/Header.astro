@@ -33,7 +33,7 @@ function isActive(href: string) {
 <header class="site-header">
   <div class="container header-inner">
     <a href={homeUrl} class="site-title">{siteTitle}</a>
-    
+
     <nav class="nav-links">
       {nav.map((item) => (
         <a href={item.href} class:list={[{ active: isActive(item.href) }]}>{item.label}</a>
@@ -48,7 +48,7 @@ function isActive(href: string) {
         </svg>
         <span class="search-text">搜索</span>
       </button>
-      
+
       <div class="theme-switcher desktop-only">
         <button class="theme-trigger" id="theme-trigger" aria-label="切换主题">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

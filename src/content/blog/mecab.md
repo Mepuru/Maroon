@@ -72,7 +72,7 @@ cut_text = mecab_tagger.parse(text)
 
 ChaSen输出的结果是：
 
-> 今日  キョウ  今日 名詞-副詞可能 
+> 今日  キョウ  今日 名詞-副詞可能
 >
 > は ハ  は  助詞-係助詞
 >

@@ -37,7 +37,7 @@ tags: [日语]
 
 ### 第四面墙 ・The fourth wall
 
-​	The **fourth wall** is a common convention in narrative drama in which a metaphorical, invisible, or imaginary wall separates performers (actors, dancers, singers, etc.) from the audience, so that the audience sees through this "wall" into the performed narrative, but the performers behave as if they cannot see the audience in turn. 
+​	The **fourth wall** is a common convention in narrative drama in which a metaphorical, invisible, or imaginary wall separates performers (actors, dancers, singers, etc.) from the audience, so that the audience sees through this "wall" into the performed narrative, but the performers behave as if they cannot see the audience in turn.
 
 ​	**第四面墙**，又译**第四堵墙**，是一面在传统三壁镜框式舞台中虚构的“墙”，是演员与观众之间的隔阂，观众透过这面“墙”可以看到戏剧设定的世界中的情节发展。在大多数的写实和自然主义戏剧中，演员在演出时假装观众不存在，观众则只是坐在观众席观看演出，台上不会、或不能和台下有互动。
 

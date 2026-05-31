@@ -52,8 +52,6 @@ const {
   prev, next,
 } = Astro.props;
 
-
-
 const routes = Astro.locals.site?.routes;
 const blogPattern = routes?.blog?.pattern ?? '/blog/[slug]';
 const blogPrefix = routes?.blog?.prefix ?? '/blog';
@@ -181,8 +179,6 @@ const dateStr = formatDate(pubDate);
     border-radius: 999px;
     font-weight: 500;
   }
-
-
 
   /* ============================================
      响应式
