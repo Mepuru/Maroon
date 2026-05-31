@@ -70,6 +70,26 @@
   background: rgba(180, 200, 255, 0.3);
 }
 
+/* 语言标签 */
+.expressive-code pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  z-index: 1;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  padding: 0.05rem 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ============================================
    图片题注
    ============================================ */
