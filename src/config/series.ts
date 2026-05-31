@@ -1,4 +1,4 @@
-import type { SeriesConfig } from '../types/series';
+import type { SeriesConfig } from '@kurikana/astro-theme/types/series';
 
 export const seriesConfig: SeriesConfig[] = [
   {
