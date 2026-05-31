@@ -13,8 +13,11 @@
   let initialized = false;
 
   function renderMermaid() {
-    const codeBlocks = document.querySelectorAll('code.language-mermaid');
-    if (!codeBlocks.length) return;
+    // Astro 的 Shiki 高亮会把 ```mermaid 渲染成：
+    //   <pre data-language="mermaid"><code><span class="line">...</span></code></pre>
+    // 我们需要提取纯文本并替换为 <div class="mermaid">
+    const blocks = document.querySelectorAll('pre[data-language="mermaid"]');
+    if (!blocks.length) return;
 
     if (!initialized) {
       mermaid.initialize({
@@ -24,21 +27,27 @@
       initialized = true;
     }
 
-    codeBlocks.forEach((code) => {
-      const pre = code.closest('pre');
-      if (!pre || pre.dataset.mermaidProcessed) return;
+    blocks.forEach((pre) => {
+      if (pre.dataset.mermaidProcessed) return;
+      pre.dataset.mermaidProcessed = 'true';
+
+      // 提取纯文本（忽略 Shiki 的语法高亮 span）
+      const rawText = pre.textContent ?? '';
 
       const div = document.createElement('div');
       div.className = 'mermaid';
-      div.textContent = code.textContent ?? '';
+      div.textContent = rawText.trim();
       pre.replaceWith(div);
     });
 
-    // 让 Mermaid 渲染新添加的 div.mermaid 元素
-    try {
-      mermaid.run({ querySelector: '.mermaid' });
-    } catch {
-      // 渲染失败时静默处理
+    // 让 Mermaid 渲染新添加的 div.mermaid
+    const mermaidElements = document.querySelectorAll('div.mermaid');
+    if (mermaidElements.length > 0) {
+      try {
+        mermaid.run({ querySelector: 'div.mermaid' });
+      } catch {
+        // 渲染失败时静默处理
+      }
     }
   }
 
@@ -52,3 +61,11 @@
   // ViewTransitions 页面切换后重新渲染
   document.addEventListener('astro:after-swap', renderMermaid);
 </script>
+
+<style>
+  /* Mermaid SVG 响应式适配 */
+  div.mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
