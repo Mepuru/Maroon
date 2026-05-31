@@ -54,39 +54,44 @@ maroon/
 
 ## 分层架构
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  App 层 (src/)                                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐ │
-│  │ config/      │  │ content/     │  │ pages/          │ │
-│  │ maroon.ts ⭐  │  │ blog/*.md    │  │ blog/[...slug]  │ │
-│  │              │  │ docs/*.md    │  │ docs/[...slug]  │ │
-│  └──────┬───────┘  └──────────────┘  └───────┬────────┘ │
-│         │                                    │           │
-│    middleware.ts                              │           │
-│    Astro.locals.site                          │           │
-└─────────┼────────────────────────────────────┼───────────┘
-          │                                    │
-┌─────────┼────────────────────────────────────┼───────────┐
-│ astro-maroon (主题包)                        │           │
-│          │                                    │           │
-│  layouts/  ←── props + Astro.locals.site      │           │
-│  ├── BaseLayout.astro                         │           │
-│  ├── PostLayout.astro   ←── 博客文章          │           │
-│  └── DocsLayout.astro   ←── 文档               │           │
-│          │                                    │           │
-│  components/                                  │           │
-│  ├── shared/PageNav    ← prev/next 导航        │           │
-│  ├── shared/TOC        ← 目录                  │           │
-│  ├── shared/Sidebar    ← 标签云 + 个人资料      │           │
-│  ├── blog/PostCard     ← 文章卡片               │           │
-│  └── docs/DocsSidebar  ← 文档分类侧边栏          │           │
-│          │                                    │           │
-│  styles/                                      │           │
-│  ├── base.css           ← CSS 变量 + 主题色     │           │
-│  ├── prose.css          ← 排版 + 代码块 + 表格  │           │
-│  └── layout.css         ← 网格 + 响应式断点      │           │
-└──────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph App["App 层 (src/)"]
+        direction TB
+        Config["config/maroon.ts ⭐"]
+        Content["content/ blog/*.md<br/>docs/*.md"]
+        Pages["pages/ blog/[...slug]<br/>docs/[...slug]"]
+        MW["middleware.ts"]
+        LS["Astro.locals.site"]
+
+        Config --> MW
+        Content --> Pages
+        MW --> LS
+    end
+
+    subgraph Theme["astro-maroon 主题包"]
+        direction TB
+        Layouts["layouts/"]
+        Components["components/"]
+        Styles["styles/"]
+
+        Layouts --> BL["BaseLayout.astro"]
+        Layouts --> PL["PostLayout.astro"]
+        Layouts --> DL["DocsLayout.astro"]
+
+        Components --> PN["shared/PageNav"]
+        Components --> TOC["shared/TOC"]
+        Components --> SB["shared/Sidebar"]
+        Components --> PC["blog/PostCard"]
+        Components --> DS["docs/DocsSidebar"]
+
+        Styles --> base["base.css (变量+主题)"]
+        Styles --> prose["prose.css (排版)"]
+        Styles --> layout["layout.css (网格)"]
+    end
+
+    LS -.-> Layouts
+    Pages -.-> Layouts
 ```
 
 ---
@@ -180,41 +185,52 @@ props → Astro.locals.site → 硬编码兜底
 
 ### 普通页面（about / 404 / 列表页）
 
-```
-.layout-wrapper.wide
-  display: block
-  max-width: 1200px, margin: 0 auto, padding: 2rem
+```mermaid
+flowchart LR
+    subgraph Wrapper["layout-wrapper.wide"]
+        direction LR
+        MC["main-content<br/>display: block<br/>max-width: 1200px"]
+    end
 ```
 
-### 博客页面（有侧边栏）
+### 博客列表页（有侧边栏）
 
-```
-.layout-wrapper (grid)
-  display: grid
-  grid-template-columns: 1fr 260px
-  ├── .main-content (文章列表 / 文章详情)
-  └── Sidebar (标签云 + 个人资料)
+```mermaid
+flowchart LR
+    subgraph Grid["layout-wrapper (grid: 1fr 260px)"]
+        MC["main-content<br/>文章列表"]
+        SB["Sidebar<br/>标签云 + 个人资料"]
+    end
+    MC --> SB
 ```
 
 ### 文章详情页（fullWidth 模式）
 
-```
-.layout-wrapper.full-width
-  max-width: none, padding: 0 1.5rem
-  ├── .post-page (padding-left: 220px 给 TOC 留位)
-  │   └── .post-article (max-width: 800px, margin: 0 auto)
-  │       └── .prose (正文排版)
-  └── Sidebar (标签云 + 个人资料)
+```mermaid
+flowchart TB
+    subgraph Wrapper["layout-wrapper.full-width"]
+        direction LR
+        subgraph Post["post-page (padding-left: 220px)"]
+            Article["post-article<br/>max-width: 800px<br/>margin: 0 auto"]
+            Prose["prose (正文排版)"]
+            Article --> Prose
+        end
+        Sidebar["Sidebar<br/>标签云 + 个人资料"]
+    end
+    TOC_fixed["TOC<br/>position: fixed<br/>left: 0"] -.-> Post
 ```
 
 ### 文档页（fullWidth + 固定侧边栏/TOC）
 
-```
-.layout-wrapper.full-width
-  ├── DocsSidebar (fixed, left: 0, 260px)
-  ├── .docs-main (margin-left: 260px, margin-right: 200px)
-  │     └── .doc-article (max-width: 800px)
-  └── .toc-wrapper (fixed, right: 0, 200px)
+```mermaid
+flowchart TB
+    subgraph Wrapper["layout-wrapper.full-width"]
+        Main["docs-main<br/>margin-left: 260px<br/>margin-right: 200px"]
+        DocArticle["doc-article<br/>max-width: 800px"]
+        Main --> DocArticle
+    end
+    DSidebar["DocsSidebar<br/>position: fixed, left: 0<br/>width: 260px"] -.-> Main
+    TOC["toc-wrapper<br/>position: fixed, right: 0<br/>width: 200px"] -.-> Main
 ```
 
 ### 响应式断点
