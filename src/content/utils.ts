@@ -1,6 +1,6 @@
 import type { SortField, SortOrder } from 'astro-maroon/types';
 import { getCollection } from 'astro:content';
-import { generateTaggableCollections } from './registry';
+import { generateTaggableCollections } from '../config/maroon';
 
 import {
   getTagStats,

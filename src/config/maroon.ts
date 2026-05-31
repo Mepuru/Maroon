@@ -1,11 +1,16 @@
 /**
- * 内容类型注册表
+ * Maroon 唯一配置入口
  *
- * 一切配置的单一入口。新增内容类型只需在此注册一条，
- * URL 路由、首页系列卡片、导航栏入口自动推导生成。
+ * 站点信息 + 内容类型注册表 + 自动推导函数，全部集中在此。
+ * 新增内容类型只需在 contentRegistry 加一条记录。
  */
 
+import type { SiteConfig } from 'astro-maroon/types/site';
 import type { SortField, SortOrder } from 'astro-maroon/types';
+
+// ============================================================
+// 内容类型配置接口
+// ============================================================
 
 export interface ContentTypeConfig {
   /** 内容类型标识，对应 src/content/ 下的目录名 */
@@ -14,8 +19,8 @@ export interface ContentTypeConfig {
   label: string;
   /** URL 路径定义 */
   route: {
-    prefix: string;     // '/blog'
-    pattern: string;    // '/blog/[slug]'
+    prefix: string;
+    pattern: string;
   };
   /** 使用哪个 Layout（'post' = PostLayout, 'doc' = DocsLayout，可扩展） */
   layout: string;
@@ -35,9 +40,12 @@ export interface ContentTypeConfig {
   };
 }
 
+// ============================================================
+// 内容类型注册表（必须先于 siteConfig，因为 nav 依赖它）
+// ============================================================
+
 /**
- * 内容类型注册表
- * 新增一个内容类型，在这里加一条声明即可
+ * ⭐ 新增一个内容类型，在这里加一条声明
  */
 export const contentRegistry: ContentTypeConfig[] = [
   {
@@ -74,10 +82,43 @@ export const contentRegistry: ContentTypeConfig[] = [
 ];
 
 // ============================================================
+// 站点配置
+// ============================================================
+
+/**
+ * ⭐ 在这里填写你的站点信息
+ * contentRegistry 必须定义在此之上，因为 nav 通过 generateNavItems 引用它
+ */
+export const siteConfig: SiteConfig = {
+  title: '栗かな',
+  description: '记录生活与技术的个人博客',
+  author: '栗かな',
+  avatar: '/icon.png',
+  icon: '/icon.png',
+  bio: '日语专业 / 技术探索中',
+  // 导航由 contentRegistry 自动生成，如需自定义可在此覆盖
+  nav: generateNavItems(),
+  social: {
+    github: 'https://github.com/Mepuru',
+  },
+  footer: {
+    icp: '鲁ICP备2024121288号',
+    icpUrl: 'https://beian.miit.gov.cn/',
+  },
+  docs: {
+    emptyTexts: [
+      '『 四季轮回 岁岁年年 』',
+      '『 今天吃什么呢？ 』\n『 是啊，吃什么呢？ 』',
+      '『 到处点一点试试看？ 』',
+    ],
+  },
+};
+
+// ============================================================
 // 自动推导函数
 // ============================================================
 
-/** 路由表：由 registry 自动生成 */
+/** 路由表 */
 export function generateRoutes() {
   const routes: Record<string, { prefix: string; pattern: string } | string> = {
     about: '/about',
@@ -87,7 +128,6 @@ export function generateRoutes() {
   for (const c of contentRegistry) {
     routes[c.id] = c.route;
   }
-  // 兼容 tags 路由（不属于内容类型，手动补充）
   routes['tags'] = { prefix: '/tags', pattern: '/tags/[tag]' };
   return routes as typeof routes & {
     blog: { prefix: string; pattern: string };
@@ -99,15 +139,11 @@ export function generateRoutes() {
   };
 }
 
-/** 导航栏：由 registry 中 showInNav 的条目自动生成 */
+/** 导航栏 */
 export function generateNavItems() {
   const items = contentRegistry
     .filter((c) => c.showInNav)
-    .map((c) => ({
-      href: c.route.prefix,
-      label: c.label,
-    }));
-  // 首页和关于固定在最前最后
+    .map((c) => ({ href: c.route.prefix, label: c.label }));
   return [
     { href: '/', label: '首页' },
     ...items,
@@ -115,12 +151,12 @@ export function generateNavItems() {
   ];
 }
 
-/** 返回带有 hasTags 标记的 collection id 列表 */
+/** 带 hasTags 标记的 collection id 列表 */
 export function generateTaggableCollections(): string[] {
   return contentRegistry.filter((c) => c.hasTags).map((c) => c.id);
 }
 
-/** 系列配置：由 registry 中有 series 字段的条目自动生成 */
+/** 系列配置 */
 export function generateSeriesConfigs() {
   return contentRegistry
     .filter((c) => c.series)
