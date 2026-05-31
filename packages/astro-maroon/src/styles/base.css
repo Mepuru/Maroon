@@ -10,6 +10,8 @@
   --muted: #8888a8;
   --card-bg: #222244;
   --code-bg: #0d0d1a;
+  --codeblock-bg: #12122a;
+  --codeblock-topbar-bg: #1a1a3a;
   --header-bg: rgba(26, 26, 46, 0.9);
   --search-bg: #222244;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -34,6 +36,8 @@
   --muted: #B0A89C;
   --card-bg: #FFFFFF;
   --code-bg: #2C2825;
+  --codeblock-bg: #1f1c1a;
+  --codeblock-topbar-bg: #2a2724;
   --header-bg: rgba(251, 249, 246, 0.9);
   --search-bg: #FFFFFF;
   --shadow-sm: 0 2px 8px rgba(58, 54, 50, 0.04);
