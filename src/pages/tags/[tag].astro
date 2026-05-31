@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
-import { siteConfig } from '../../config/site';
-import { themes, defaultTheme } from '@kurikana/astro-theme/utils/themes';
+// 全局配置由 Astro.locals.site 注入
 import { getCollection } from 'astro:content';
-import { getPublishedPosts } from '../../utils/content';
+import { getPublishedPosts, buildSidebarData } from '../../content/utils';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -17,43 +16,20 @@ export async function getStaticPaths() {
   }));
 }
 
-const { title, description, nav, author, footer } = siteConfig;
-
 const { tag } = Astro.props;
 
 const publishedPosts = await getPublishedPosts();
 const posts = publishedPosts.filter((p) => p.data.tags.includes(tag));
 
-// 全局标签（给侧边栏）
-const allTags = publishedPosts.flatMap((p) => p.data.tags);
-const tagCountMap = allTags.reduce((acc, tag) => {
-  acc[tag] = (acc[tag] || 0) + 1;
-  return acc;
-}, {} as Record<string, number>);
-const sortedTags = Object.entries(tagCountMap)
-  .sort((a, b) => b[1] - a[1])
-  .map(([name, count]) => ({ name, count }));
-
-const sidebarData = {
-  avatar: siteConfig.avatar,
-  author: siteConfig.author,
-  bio: siteConfig.bio,
-  postsCount: publishedPosts.length,
-  tags: sortedTags,
-  tagCount: sortedTags.length,
-  githubUrl: siteConfig.social.github,
-};
+// 构造侧边栏数据
+const ctx = Astro.locals.site;
+const sidebarData = buildSidebarData(
+  { avatar: ctx?.avatar ?? '', author: ctx?.author ?? '', bio: ctx?.bio ?? '', social: { github: ctx?.social?.github } },
+  publishedPosts,
+);
 ---
 
 <BaseLayout
-  siteTitle={title}
-  siteDescription={description}
-  nav={nav}
-  themes={themes}
-  defaultTheme={defaultTheme}
-  author={author}
-  icp={footer.icp}
-  icpUrl={footer.icpUrl}
   title={`${tag} - 栗かな的博客`}
   sidebar={true}
   sidebarData={sidebarData}

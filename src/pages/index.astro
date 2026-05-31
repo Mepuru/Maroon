@@ -3,8 +3,6 @@ import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import Hero from '@kurikana/astro-theme/components/home/Hero.astro';
 import SeriesSection from '@kurikana/astro-theme/components/home/SeriesSection.astro';
 import SeriesCard from '@kurikana/astro-theme/components/home/SeriesCard.astro';
-import { siteConfig } from '../config/site';
-import { themes, defaultTheme } from '@kurikana/astro-theme/utils/themes';
 import { seriesConfig } from '../config/series';
 import { getCollection } from 'astro:content';
 import '@kurikana/astro-theme/styles/home.css';
@@ -45,23 +43,18 @@ const seriesData = await Promise.all(
   })
 );
 
-const { title, description, nav, author, footer } = siteConfig;
+const ctx = Astro.locals.site;
+const avatar = ctx?.avatar ?? '/icon.png';
+const author = ctx?.author ?? '';
+const bio = ctx?.bio ?? '';
 ---
 
 <BaseLayout
-  siteTitle={title}
-  siteDescription={description}
-  nav={nav}
-  themes={themes}
-  defaultTheme={defaultTheme}
-  author={author}
-  icp={footer.icp}
-  icpUrl={footer.icpUrl}
   title="栗かな"
   description="记录生活与技术的个人博客"
 >
   <div class="home-page">
-    <Hero avatar={siteConfig.avatar} author={siteConfig.author} bio={siteConfig.bio} />
+    <Hero avatar={avatar} author={author} bio={bio} />
     
     <SeriesSection title="我的系列">
       {seriesData.map((series) => (
