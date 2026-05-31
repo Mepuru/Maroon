@@ -26,6 +26,7 @@ const posts = allPosts.filter((p) => (p.data.tags ?? []).includes(tag));
   title={`${tag} - ${Astro.locals.site?.title ?? ''}`}
   sidebar={true}
   sidebarData={sidebarData}
+  fullWidth={true}
 >
   <a href={Astro.locals.site?.routes?.blog?.prefix ?? '/blog'} class="back-link">&larr; 文章</a>
   <h1 class="page-title">标签：{tag}</h1>

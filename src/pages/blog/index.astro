@@ -11,6 +11,7 @@ const { posts, sidebarData } = await buildBlogSidebar(ctx);
   title={`文章 - ${Astro.locals.site?.title ?? ''}`}
   sidebar={true}
   sidebarData={sidebarData}
+  fullWidth={true}
 >
   <h1 class="page-title">文章</h1>
   <div class="post-grid">
