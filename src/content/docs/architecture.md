@@ -181,9 +181,7 @@ props → Astro.locals.site → 硬编码兜底
 ```css
 .layout-wrapper.wide {
   display: block;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  /* max-width/padding 继承自 .layout-wrapper 基础规则 */
 }
 ```
 
@@ -207,6 +205,7 @@ props → Astro.locals.site → 硬编码兜底
 ```css
 .layout-wrapper.full-width {
   max-width: none;
+  margin: 0;
   padding: 0 1.5rem;
 }
 
@@ -214,8 +213,9 @@ props → Astro.locals.site → 硬编码兜底
   padding-left: 220px;       /* 给左侧 TOC 让位 */
 }
 .post-article {
-  max-width: 800px;          /* 文章可读宽度 */
+  max-width: 800px;
   margin: 0 auto;
+  padding: 2rem 1.5rem;
 }
 ```
 
@@ -239,7 +239,7 @@ props → Astro.locals.site → 硬编码兜底
 }
 .toc-wrapper {
   position: fixed;
-  right: 0;
+  right: 0.25rem;
   width: 200px;
 }
 ```
@@ -248,8 +248,8 @@ props → Astro.locals.site → 硬编码兜底
 
 | 宽度 | 博客 | 文档 |
 |------|------|------|
-| >1200px | TOC fixed 左 + Sidebar 右 | Sidebar fixed 左 + TOC fixed 右 |
-| 769–1200px | TOC→悬浮按钮 | TOC→悬浮按钮 |
+| >1200px（桌面默认） | TOC fixed 左 + Sidebar 右 | Sidebar fixed 左 + TOC fixed 右 |
+| ≤1200px | TOC→悬浮按钮 | TOC→悬浮按钮 |
 | ≤768px | 单列 + TOC 按钮 | 侧边栏→抽屉 + TOC 按钮 |
 
 ---
@@ -359,12 +359,19 @@ import 'astro-maroon/styles/layout.css';
 
 ### 2. Zod Schema
 
-`src/content.config.ts` 加 `defineCollection`：
+`src/content.config.ts` 加 `defineCollection`（Astro 5 写法）：
 
 ```typescript
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
 const notes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/notes' }),
-  schema: z.object({ title: z.string(), pubDate: z.coerce.date(), draft: z.boolean().default(false) }),
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.coerce.date(),
+    draft: z.boolean().default(false),
+  }),
 });
 export const collections = { blog, docs, pages, notes };
 ```

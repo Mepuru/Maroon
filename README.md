@@ -29,7 +29,6 @@ Maroon 是一个基于 **Astro 5** 的静态博客与文档双用途主题。采
 - **全文搜索** — Pagefind 构建时索引，零运行时依赖
 - **代码高亮** — Expressive Code，github-dark 主题，支持行号
 - **图片灯箱** — PhotoSwipe，点击放大、滚轮缩放
-- **图片题注** — Markdown `![alt](src "caption")` 自动渲染为 figure + figcaption
 - **响应式布局** — 桌面三栏 / 平板双栏 / 手机单栏 + 抽屉
 - **配置驱动** — 站点信息、内容类型、导航全部集中在一个配置文件
 - **Monorepo 架构** — 主题包独立，可发布到 npm 复用
