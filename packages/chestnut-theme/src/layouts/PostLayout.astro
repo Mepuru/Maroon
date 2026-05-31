@@ -71,6 +71,8 @@ const dateStr = formatDate(pubDate);
   sidebarData={sidebarData}
 >
   <div class="post-page">
+    {headings.length > 0 && <TOC headings={headings} />}
+
     <article class="post-article">
       <a href="/blog" class="back-link">&larr; 返回文章列表</a>
       <header class="post-header">
@@ -89,8 +91,6 @@ const dateStr = formatDate(pubDate);
         <slot />
       </div>
     </article>
-
-    {headings.length > 0 && <TOC headings={headings} />}
   </div>
 </BaseLayout>
 
