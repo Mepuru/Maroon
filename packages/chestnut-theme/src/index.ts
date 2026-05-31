@@ -15,6 +15,9 @@ export type {
   PostCardProps,
   PostData,
 } from './types/blog';
+
+// Components
+export { default as PageNav } from './components/shared/PageNav.astro';
 export type {
   HeroProps,
   SeriesSectionProps,

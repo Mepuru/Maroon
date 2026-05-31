@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import DocsSidebar from '../components/docs/DocsSidebar.astro';
 import TOC from '../components/shared/TOC.astro';
+import PageNav from '../components/shared/PageNav.astro';
 import { formatDate } from '../utils/date';
 
 interface DocNavItem {
@@ -52,7 +53,7 @@ const {
 } = Astro.props;
 
 // 截断过长的标题
-const truncateTitle = (s: string, max = 24) => s.length > max ? s.slice(0, max) + '…' : s;
+
 
 const routes = Astro.locals.site?.routes;
 const docsPrefix = routes?.docs?.prefix ?? '/docs';
@@ -88,22 +89,7 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
           <div class="doc-content prose">
             <slot />
           </div>
-          {(prev || next) && (
-            <nav class="doc-nav">
-              {prev ? (
-                <a href={`${docsPrefix}/${prev.slug}`} class="doc-nav-link">
-                  <span class="doc-nav-label">&larr; 上一篇</span>
-                  <span class="doc-nav-title">{truncateTitle(prev.title)}</span>
-                </a>
-              ) : <span />}
-              {next ? (
-                <a href={`${docsPrefix}/${next.slug}`} class="doc-nav-link doc-nav-next">
-                  <span class="doc-nav-label">下一篇 &rarr;</span>
-                  <span class="doc-nav-title">{truncateTitle(next.title)}</span>
-                </a>
-              ) : <span />}
-            </nav>
-          )}
+          <PageNav prev={prev} next={next} prefix={docsPrefix} />
         </article>
       ) : (
         <div class="doc-article doc-empty">
@@ -177,49 +163,7 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
     line-height: 1.9;
   }
 
-  .doc-nav {
-    display: flex;
-    gap: 1rem;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
 
-  .doc-nav-link {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: border-color 0.2s ease, background 0.2s ease;
-  }
-
-  .doc-nav-link:hover {
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }
-
-  .doc-nav-next {
-    text-align: right;
-  }
-
-  .doc-nav-label {
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-
-  .doc-nav-title {
-    font-size: 0.9rem;
-    color: var(--fg);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
   /* ============================================
      TOC（右侧，固定于视口右边缘）
@@ -347,9 +291,7 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
       display: flex;
     }
 
-    .doc-nav {
-      flex-direction: column;
-    }
+
   }
 </style>
 
