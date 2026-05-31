@@ -21,7 +21,10 @@ const seriesData = await Promise.all(
       return {
         ...series,
         count: sorted.length,
-        recent: sorted.slice(0, 3),
+        recent: sorted.slice(0, 3).map((item) => ({
+          href: `${series.link}/${item.id}`,
+          title: item.data.title,
+        })),
       };
     } catch {
       return {

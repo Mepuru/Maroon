@@ -12,10 +12,8 @@ export interface SeriesCardProps {
   count: number;
   countLabel: string;
   recent: Array<{
-    id: string;
-    data: {
-      title: string;
-    };
+    href: string;
+    title: string;
   }>;
   link: string;
   align?: 'left' | 'right';

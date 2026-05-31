@@ -1,10 +1,9 @@
 ---
 // 单个系列卡片组件
+
 interface RecentItem {
-  id: string;
-  data: {
-    title: string;
-  };
+  href: string;
+  title: string;
 }
 
 interface Props {
@@ -37,7 +36,7 @@ const { title, description, count, countLabel, recent, link, align = 'left' } = 
     <ul class="recent-list">
       {recent.map((item) => (
         <li class="recent-item">
-          <a href={`${link}/${item.id}`}>{item.data.title}</a>
+          <a href={item.href}>{item.title}</a>
         </li>
       ))}
     </ul>

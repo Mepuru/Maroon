@@ -16,9 +16,7 @@ export interface SeriesConfig {
 export interface SeriesData extends SeriesConfig {
   count: number;
   recent: Array<{
-    id: string;
-    data: {
-      title: string;
-    };
+    href: string;
+    title: string;
   }>;
 }
