@@ -90,29 +90,7 @@
   user-select: none;
 }
 
-/* ============================================
-   图片题注
-   ============================================ */
-.prose figure.image-caption {
-  margin: 1.5rem 0;
-  text-align: center;
-}
 
-.prose figure.image-caption img {
-  display: block;
-  margin: 0 auto;
-  border-radius: var(--radius-md);
-  max-width: 100%;
-  height: auto;
-}
-
-.prose figure.image-caption figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-style: italic;
-  line-height: 1.5;
-}
 
 .prose code {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
