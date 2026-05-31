@@ -2,6 +2,7 @@
   "name": "chestnut-astro",
   "type": "module",
   "version": "1.0.0",
+  "private": true,
   "engines": {
     "node": ">=18"
   },
@@ -10,8 +11,12 @@
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
     "astro": "5.7.10",
-    "pagefind": "1.3.0"
+    "pagefind": "1.3.0",
+    "@kurikana/astro-theme": "file:packages/chestnut-theme"
   }
 }

@@ -1,3 +1,10 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@kurikana/astro-theme": ["./packages/chestnut-theme/src"],
+      "@kurikana/astro-theme/*": ["./packages/chestnut-theme/src/*"]
+    }
+  }
 }
