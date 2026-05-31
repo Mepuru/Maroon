@@ -4,7 +4,7 @@
 
 /* 页面容器 */
 .home-page {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
   min-height: calc(100vh - 200px);
