@@ -10,27 +10,13 @@ export default defineConfig({
     expressiveCode({
       themes: ['github-dark'],
       plugins: [pluginLineNumbers()],
-      defaultProps: {
-        wrap: true,
-      },
-      frames: {
-        extractTitleFromMeta: false,
-      },
+      defaultProps: { wrap: true },
       styleOverrides: {
-        frames: {
-          editorBackground: 'var(--code-bg)',
-          terminalBackground: 'var(--code-bg)',
-          terminalTitlebarBackground: 'var(--code-bg)',
-          editorTabBarBackground: 'var(--code-bg)',
-          editorTabBarBorderBottomColor: 'transparent',
-          terminalTitlebarBorderBottomColor: 'transparent',
-        },
         borderRadius: '12px',
         borderColor: 'var(--border)',
         codeFontSize: '0.875rem',
         codeFontFamily: "'JetBrains Mono Variable', 'Cascadia Code', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
       },
-
     }),
   ],
   markdown: {

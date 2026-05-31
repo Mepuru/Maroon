@@ -57,33 +57,17 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Expressive Code 代码块间距 */
-.prose .expressive-code {
+/* Expressive Code — 简洁覆盖（参考 Fuwari） */
+.expressive-code {
   margin: 1.5rem 0;
 }
 
-/* 语言标签：右下角 */
-.expressive-code pre[data-language] {
-  position: relative;
+.expressive-code .frame {
+  box-shadow: none !important;
 }
 
-.expressive-code pre[data-language]::before {
-  content: attr(data-language);
-  position: absolute;
-  z-index: 1;
-  right: 0.5rem;
-  bottom: 0.5rem;
-  padding: 0.05rem 0.4rem;
-  font-size: 0.6rem;
-  font-weight: 500;
-  line-height: 1.5;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 4px;
-  pointer-events: none;
-  user-select: none;
+.expressive-code ::selection {
+  background: rgba(180, 200, 255, 0.3);
 }
 
 /* ============================================
@@ -108,13 +92,6 @@
   color: var(--muted);
   font-style: italic;
   line-height: 1.5;
-}
-
-/* 代码块内选中文字 */
-.expressive-code pre ::selection,
-.expressive-code code ::selection {
-  background: rgba(180, 210, 255, 0.35) !important;
-  color: inherit !important;
 }
 
 .prose code {
