@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
-// 全局配置由 Astro.locals.site 注入
 import { getCollection } from 'astro:content';
-import '../../styles/layout.css';
-import { getPublishedPosts, buildSidebarData } from '../../content/utils';
+import '@kurikana/astro-theme/styles/layout.css';
+import { buildBlogSidebar } from '../../content/utils';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -19,15 +18,9 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.props;
 
-const publishedPosts = await getPublishedPosts();
-const posts = publishedPosts.filter((p) => p.data.tags.includes(tag));
-
-// 构造侧边栏数据
 const ctx = Astro.locals.site;
-const sidebarData = buildSidebarData(
-  { avatar: ctx?.avatar ?? '/icon.png', author: ctx?.author ?? '', bio: ctx?.bio ?? '', social: { github: ctx?.social?.github } },
-  publishedPosts,
-);
+const { posts: publishedPosts, sidebarData } = await buildBlogSidebar(ctx);
+const posts = publishedPosts.filter((p) => p.data.tags.includes(tag));
 ---
 
 <BaseLayout

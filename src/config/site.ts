@@ -1,4 +1,5 @@
 import type { SiteConfig } from '@kurikana/astro-theme/types/site';
+import { generateNavItems } from '../content/registry';
 
 export const siteConfig: SiteConfig = {
   title: '栗かな',
@@ -7,12 +8,8 @@ export const siteConfig: SiteConfig = {
   avatar: '/icon.png',
   icon: '/icon.png',
   bio: '日语专业 / 技术探索中',
-  nav: [
-    { href: '/', label: '首页' },
-    { href: '/blog', label: '博客' },
-    { href: '/docs', label: '文档' },
-    { href: '/about', label: '关于' },
-  ],
+  // 导航由 registry 中 showInNav 的条目自动生成，如需自定义可在此覆盖
+  nav: generateNavItems(),
   social: {
     github: 'https://github.com/Mepuru',
   },

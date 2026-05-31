@@ -3,10 +3,12 @@ import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 import Hero from '@kurikana/astro-theme/components/home/Hero.astro';
 import SeriesSection from '@kurikana/astro-theme/components/home/SeriesSection.astro';
 import SeriesCard from '@kurikana/astro-theme/components/home/SeriesCard.astro';
-import { seriesConfig } from '../config/series';
+import { generateSeriesConfigs } from '../content/registry';
+
+const seriesConfig = generateSeriesConfigs();
 import { getCollection } from 'astro:content';
 import '@kurikana/astro-theme/styles/home.css';
-import '../styles/layout.css';
+import '@kurikana/astro-theme/styles/layout.css';
 
 // 通用排序函数
 function sortItems(items: any[], sortField: string, sortOrder: string) {

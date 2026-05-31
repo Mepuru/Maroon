@@ -1,26 +1,28 @@
 /**
  * 内容类型注册表
  *
- * 新增一个内容类型的标准流程：
- * 1. 在 src/content/ 下建目录（如 recipes/）
- * 2. 在 src/content.config.ts 中 defineCollection
- * 3. 在本文件 registry 数组中加一条配置
- * 4. 在 src/pages/ 下建路由文件（参考 blog 或 docs）
- * 5. 如有需要，在 src/config/series.ts 加系列（首页展示）
- *
- * 未来可以基于此 registry 自动生成 RSS / sitemap / 导航。
+ * 一切配置的单一入口。新增内容类型只需在此注册一条，
+ * URL 路由、首页系列卡片、导航栏入口自动推导生成。
  */
 
 import type { SortField, SortOrder } from '@kurikana/astro-theme/types';
 
 export interface ContentTypeConfig {
+  /** 内容类型标识，对应 src/content/ 下的目录名 */
   id: string;
   /** 显示名称，用于导航和标题 */
   label: string;
-  /** 路由 key，对应 src/config/routing.ts 中的 routes */
-  routeKey: string;
-  /** 是否在详情页显示侧边栏（作者信息 + 标签云） */
+  /** URL 路径定义 */
+  route: {
+    prefix: string;     // '/blog'
+    pattern: string;    // '/blog/[slug]'
+  };
+  /** 使用哪个 Layout（post = PostLayout, doc = DocsLayout） */
+  layout: 'post' | 'doc';
+  /** 详情页是否显示侧边栏（作者信息 + 标签云） */
   sidebarIncluded: boolean;
+  /** 是否出现在导航栏 */
+  showInNav?: boolean;
   /** 可选：是否出现在首页的系列卡片区 */
   series?: {
     description: string;
@@ -33,14 +35,16 @@ export interface ContentTypeConfig {
 
 /**
  * 内容类型注册表
- * 每新增一个内容类型，在这里加一条声明即可
+ * 新增一个内容类型，在这里加一条声明即可
  */
 export const contentRegistry: ContentTypeConfig[] = [
   {
     id: 'blog',
     label: '博客',
-    routeKey: 'blog',
+    route: { prefix: '/blog', pattern: '/blog/[slug]' },
+    layout: 'post',
     sidebarIncluded: true,
+    showInNav: true,
     series: {
       description: '散装的技术与生活记录',
       countLabel: '篇文章',
@@ -52,8 +56,10 @@ export const contentRegistry: ContentTypeConfig[] = [
   {
     id: 'docs',
     label: '文档',
-    routeKey: 'docs',
+    route: { prefix: '/docs', pattern: '/docs/[slug]' },
+    layout: 'doc',
     sidebarIncluded: false,
+    showInNav: true,
     series: {
       description: '技术文档与知识整理',
       countLabel: '篇文档',
@@ -62,26 +68,63 @@ export const contentRegistry: ContentTypeConfig[] = [
       sortOrder: 'desc',
     },
   },
-  {
-    id: 'pages',
-    label: '页面',
-    routeKey: 'about',
-    sidebarIncluded: false,
-  },
 ];
 
-/**
- * 按 id 查找内容类型配置
- */
-export function getContentConfig(id: string): ContentTypeConfig | undefined {
-  return contentRegistry.find((c) => c.id === id);
+// ============================================================
+// 自动推导函数
+// ============================================================
+
+/** 路由表：由 registry 自动生成 */
+export function generateRoutes() {
+  const routes: Record<string, { prefix: string; pattern: string } | string> = {
+    about: '/about',
+    home: '/',
+    icon: '/icon.png',
+  };
+  for (const c of contentRegistry) {
+    routes[c.id] = c.route;
+  }
+  // 兼容 tags 路由（不属于内容类型，手动补充）
+  routes['tags'] = { prefix: '/tags', pattern: '/tags/[tag]' };
+  return routes as typeof routes & {
+    blog: { prefix: string; pattern: string };
+    docs: { prefix: string; pattern: string };
+    tags: { prefix: string; pattern: string };
+    about: string;
+    home: string;
+    icon: string;
+  };
 }
 
-/**
- * 获取所有需要展示在首页系列区的内容类型
- */
-export function getSeriesConfigs() {
-  return contentRegistry.filter((c) => c.series) as Required<
-    Pick<ContentTypeConfig, 'id' | 'label' | 'routeKey' | 'series'>
-  >[];
+/** 导航栏：由 registry 中 showInNav 的条目自动生成 */
+export function generateNavItems() {
+  const items = contentRegistry
+    .filter((c) => c.showInNav)
+    .map((c) => ({
+      href: c.route.prefix,
+      label: c.label,
+    }));
+  // 首页和关于固定在最前最后
+  return [
+    { href: '/', label: '首页' },
+    ...items,
+    { href: '/about', label: '关于' },
+  ];
+}
+
+/** 系列配置：由 registry 中有 series 字段的条目自动生成 */
+export function generateSeriesConfigs() {
+  return contentRegistry
+    .filter((c) => c.series)
+    .map((c) => ({
+      id: c.id,
+      title: c.label,
+      description: c.series!.description,
+      countLabel: c.series!.countLabel,
+      link: c.route.prefix,
+      collection: c.id,
+      align: c.series!.align ?? ('left' as const),
+      sortField: c.series!.sortField,
+      sortOrder: c.series!.sortOrder,
+    }));
 }

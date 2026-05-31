@@ -2,8 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import PostLayout from '@kurikana/astro-theme/layouts/PostLayout.astro';
 import { estimateReadingTime } from '@kurikana/astro-theme/utils/reading-time';
-import '../../styles/layout.css';
-import { getPublishedPosts, buildSidebarData } from '../../content/utils';
+import '@kurikana/astro-theme/styles/layout.css';
+import { buildBlogSidebar, computePrevNext } from '../../content/utils';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -20,18 +20,9 @@ type Props = Awaited<ReturnType<typeof getCollection<'blog'>>>[number];
 const post = Astro.props;
 const { Content, headings } = await render(post);
 
-// 构造侧边栏数据
 const ctx = Astro.locals.site;
-const publishedPosts = await getPublishedPosts();
-const sidebarData = buildSidebarData(
-  { avatar: ctx?.avatar ?? '/icon.png', author: ctx?.author ?? '', bio: ctx?.bio ?? '', social: { github: ctx?.social?.github } },
-  publishedPosts,
-);
-
-// 上下篇导航
-const currentIndex = publishedPosts.findIndex((p) => p.id === post.id);
-const prev = currentIndex > 0 ? publishedPosts[currentIndex - 1] : null;
-const next = currentIndex < publishedPosts.length - 1 ? publishedPosts[currentIndex + 1] : null;
+const { posts: publishedPosts, sidebarData } = await buildBlogSidebar(ctx);
+const { prev, next } = computePrevNext(publishedPosts, post.id);
 ---
 
 <PostLayout

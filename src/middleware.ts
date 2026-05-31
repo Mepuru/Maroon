@@ -1,11 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
+import { generateRoutes } from './content/registry';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // 懒加载避免影响 dev 启动速度
-  const [siteModule, themeModule, routesModule] = await Promise.all([
+  const [siteModule, themeModule] = await Promise.all([
     import('./config/site'),
     import('@kurikana/astro-theme/utils/themes'),
-    import('./config/routing'),
   ]);
 
   const site = siteModule.siteConfig;
@@ -14,7 +14,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     ...site,
     themes: themeModule.themes,
     defaultTheme: themeModule.defaultTheme,
-    routes: routesModule.routes,
+    routes: generateRoutes(),
   };
 
   return next();
