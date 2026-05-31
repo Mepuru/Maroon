@@ -13,6 +13,9 @@ export default defineConfig({
       defaultProps: {
         wrap: true,
       },
+      frames: {
+        extractTitleFromMeta: false,
+      },
       styleOverrides: {
         frames: {
           editorBackground: 'var(--code-bg)',

@@ -144,7 +144,6 @@ const posts = (await getCollection('blog'))
 Astro 的内容 schema 和组件 Props 有重复定义，用 `z.infer` 从 schema 推导类型：
 
 ```typescript
-// content.config.ts
 export const blogSchema = z.object({
   title: z.string(),
   description: z.string(),
