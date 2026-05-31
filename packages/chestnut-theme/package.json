@@ -1,0 +1,23 @@
+{
+  "name": "@kurikana/astro-theme",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "KuriKana Astro blog & docs theme",
+  "exports": {
+    ".": "./src/index.ts",
+    "./components/*": "./src/components/*",
+    "./layouts/*": "./src/layouts/*",
+    "./styles/*": "./src/styles/*",
+    "./types/*": "./src/types/*",
+    "./utils/*": "./src/utils/*"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "astro": "^5.7.0"
+  },
+  "peerDependencies": {
+    "astro": "^5.0.0"
+  }
+}
