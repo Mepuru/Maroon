@@ -1,15 +1,8 @@
 /**
- * URL 路由模板集中管理
+ * URL 路径生成工具
  *
- * 路由表现已移至 src/content/registry.ts（generateRoutes 自动生成），
- * 此文件仅保留 generatePath 工具函数供需要时调用。
+ * 实现委托给 @kurikana/astro-theme/utils/generate-path，
+ * 作为 app 层的导出入口供需要 import 的页面使用。
  */
 
-export function generatePath(
-  routeKey: string,
-  params?: Record<string, string>,
-): string {
-  // 从 Astro.locals.site.routes 获取当前路由表
-  // 运行时动态生成路径
-  return '';
-}
+export { generatePath } from '@kurikana/astro-theme/utils/generate-path';

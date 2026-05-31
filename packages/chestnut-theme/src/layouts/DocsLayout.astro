@@ -56,7 +56,7 @@ const {
 
 
 const routes = Astro.locals.site?.routes;
-const docsPrefix = routes?.docs?.prefix ?? '/docs';
+const docsPattern = routes?.docs?.pattern ?? '/docs/[slug]';
 
 const dateStr = pubDate ? formatDate(pubDate) : '';
 const hasDoc = !!currentSlug;
@@ -74,7 +74,7 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
       categories={categories}
       totalCount={totalCount}
       uncategorized={uncategorized}
-      docUrlPrefix={docsPrefix}
+      docPattern={docsPattern}
     />
 
     <main class="docs-main">
@@ -89,7 +89,7 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
           <div class="doc-content prose">
             <slot />
           </div>
-          <PageNav prev={prev} next={next} prefix={docsPrefix} />
+          <PageNav prev={prev} next={next} pattern={docsPattern} />
         </article>
       ) : (
         <div class="doc-article doc-empty">

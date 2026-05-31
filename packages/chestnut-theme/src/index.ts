@@ -30,6 +30,7 @@ export { formatDate } from './utils/date';
 export { estimateReadingTime } from './utils/reading-time';
 export { themes, defaultTheme } from './utils/themes';
 export type { Theme } from './utils/themes';
+export { generatePath } from './utils/generate-path';
 
 // Content utilities
 export { getTagStats, buildSidebarData, groupDocsByCategory } from './utils/content';

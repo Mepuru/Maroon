@@ -55,6 +55,7 @@ const {
 
 
 const routes = Astro.locals.site?.routes;
+const blogPattern = routes?.blog?.pattern ?? '/blog/[slug]';
 const blogPrefix = routes?.blog?.prefix ?? '/blog';
 
 const dateStr = formatDate(pubDate);
@@ -88,7 +89,7 @@ const dateStr = formatDate(pubDate);
       <div class="prose">
         <slot />
       </div>
-      <PageNav prev={prev} next={next} prefix={blogPrefix} />
+      <PageNav prev={prev} next={next} pattern={blogPattern} />
     </article>
   </div>
 </BaseLayout>

@@ -1,4 +1,6 @@
 ---
+import { generatePath } from '../../utils/generate-path';
+
 interface DocNavItem {
   slug: string;
   title: string;
@@ -14,11 +16,11 @@ interface Props {
   categories: DocCategory[];
   totalCount: number;
   uncategorized?: DocNavItem[];
-  /** 文档 URL 前缀，默认 /docs */
-  docUrlPrefix?: string;
+  /** 文档 URL pattern，默认 /docs/[slug] */
+  docPattern?: string;
 }
 
-const { currentSlug, categories, totalCount, uncategorized = [], docUrlPrefix = '/docs' } = Astro.props;
+const { currentSlug, categories, totalCount, uncategorized = [], docPattern = '/docs/[slug]' } = Astro.props;
 ---
 
 <aside class="docs-sidebar" id="docs-sidebar">
@@ -37,7 +39,7 @@ const { currentSlug, categories, totalCount, uncategorized = [], docUrlPrefix = 
         <div class="category-items">
           {cat.docs.map((doc) => (
             <a
-              href={`${docUrlPrefix}/${doc.slug}`}
+              href={generatePath(docPattern, { slug: doc.slug })}
               class:list={['sidebar-link', { active: currentSlug === doc.slug }]}
               title={doc.title}
             >
@@ -57,7 +59,7 @@ const { currentSlug, categories, totalCount, uncategorized = [], docUrlPrefix = 
         <div class="category-items">
           {uncategorized.map((doc) => (
             <a
-              href={`${docUrlPrefix}/${doc.slug}`}
+              href={generatePath(docPattern, { slug: doc.slug })}
               class:list={['sidebar-link', { active: currentSlug === doc.slug }]}
               title={doc.title}
             >
@@ -71,7 +73,7 @@ const { currentSlug, categories, totalCount, uncategorized = [], docUrlPrefix = 
     {uncategorized.length > 0 && categories.length === 0 && (
       uncategorized.map((doc) => (
         <a
-          href={`${docUrlPrefix}/${doc.slug}`}
+          href={generatePath(docPattern, { slug: doc.slug })}
           class:list={['sidebar-link', { active: currentSlug === doc.slug }]}
           title={doc.title}
         >

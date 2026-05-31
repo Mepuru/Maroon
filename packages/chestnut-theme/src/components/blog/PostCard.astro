@@ -1,13 +1,14 @@
 ---
 import type { PostCardProps } from '../../types';
 import { formatDate } from '../../utils/date';
+import { generatePath } from '../../utils/generate-path';
 
 type Props = PostCardProps;
 
 const { title, description, pubDate, slug, tags = [], itemUrl } = Astro.props;
 
 const routes = Astro.locals.site?.routes;
-const blogPrefix = routes?.blog?.prefix ?? '/blog';
+const blogPattern = routes?.blog?.pattern ?? '/blog/[slug]';
 
 const dateStr = formatDate(pubDate);
 ---
@@ -27,7 +28,7 @@ const dateStr = formatDate(pubDate);
       )}
     </div>
     <h3 class="post-card-title">
-      <a href={itemUrl ?? `${blogPrefix}/${slug}`}>{title}</a>
+      <a href={itemUrl ?? generatePath(blogPattern, { slug })}>{title}</a>
     </h3>
     <p class="post-card-desc">{description}</p>
   </div>

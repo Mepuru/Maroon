@@ -1,4 +1,6 @@
 ---
+import { generatePath } from '../../utils/generate-path';
+
 interface NavItem {
   title: string;
   slug: string;
@@ -7,10 +9,10 @@ interface NavItem {
 interface Props {
   prev?: NavItem | null;
   next?: NavItem | null;
-  prefix: string;
+  pattern: string;
 }
 
-const { prev, next, prefix } = Astro.props;
+const { prev, next, pattern } = Astro.props;
 
 const truncateTitle = (s: string, max = 24) =>
   s.length > max ? s.slice(0, max) + '…' : s;
@@ -19,13 +21,13 @@ const truncateTitle = (s: string, max = 24) =>
 {(prev || next) && (
   <nav class="page-nav">
     {prev ? (
-      <a href={`${prefix}/${prev.slug}`} class="page-nav-link">
+      <a href={generatePath(pattern, { slug: prev.slug })} class="page-nav-link">
         <span class="page-nav-label">&larr; 上一篇</span>
         <span class="page-nav-title">{truncateTitle(prev.title)}</span>
       </a>
     ) : <span />}
     {next ? (
-      <a href={`${prefix}/${next.slug}`} class="page-nav-link page-nav-next">
+      <a href={generatePath(pattern, { slug: next.slug })} class="page-nav-link page-nav-next">
         <span class="page-nav-label">下一篇 &rarr;</span>
         <span class="page-nav-title">{truncateTitle(next.title)}</span>
       </a>
