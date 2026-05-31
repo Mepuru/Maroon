@@ -19,12 +19,13 @@
 
 - **Astro 5.x** — 内容驱动，零 JS 首屏
 - **Monorepo 架构** — 主题包独立，可发布复用
+- **Registry 驱动配置** — 新增内容类型只需一条注册，导航/路由/首页卡片自动生成
 - **ViewTransitions** — 页面间平滑 crossfade 过渡
 - **三套主题** — 奶油 / 樱花 / 星空，CSS 变量驱动，localStorage 记忆
 - **博客系统** — Markdown 文章、标签筛选、阅读时间、上下篇导航
 - **文档系统** — 侧边栏固定 + TOC 固定、分类折叠、上下篇导航
 - **全文搜索** — Pagefind 构建时索引，零运行时依赖
-- **配置驱动** — 个人信息/导航集中在 `src/config/site.ts`
+- **配置驱动** — 个人信息/路径/导航集中在 registry + site.ts
 - **响应式** — 桌面三列 / 平板双列 / 手机抽屉式侧边栏
 
 ## 本地开发
@@ -43,38 +44,49 @@ chestnut-astro/
 ├── packages/
 │   └── chestnut-theme/        # @kurikana/astro-theme — 独立主题包
 │       ├── src/
-│       │   ├── components/    # UI 组件（Header, Footer, PostCard, Sidebar, TOC...）
+│       │   ├── components/    # UI 组件（Header, Footer, PostCard, Sidebar, PageNav, TOC...）
 │       │   ├── layouts/       # BaseLayout, PostLayout, DocsLayout
-│       │   ├── styles/        # CSS 变量、prose 排版、theme-switcher
-│       │   ├── types/         # SiteConfig, SeriesConfig, PostCardProps 等公共类型
-│       │   └── utils/         # formatDate, estimateReadingTime, getTagStats 等工具
+│       │   ├── styles/        # CSS 变量、prose 排版、layout 网格、theme-switcher
+│       │   ├── types/         # SiteConfig, RoutesConfig, PostCardProps 等公共类型
+│       │   └── utils/         # formatDate, estimateReadingTime, buildSidebarData 等
 │       └── package.json
 │
 ├── src/                       # 主应用 — 胶水层
 │   ├── config/
-│   │   ├── site.ts            # ⭐ 站点配置（单一修改入口）
-│   │   ├── series.ts          # 系列配置（博客/文档板块）
-│   │   └── routing.ts         # URL 路由模板
-│   ├── content/               # Markdown 内容
-│   │   ├── blog/              # 博客文章
-│   │   ├── docs/              # 文档文章
-│   │   ├── pages/             # 独立页面
-│   │   └── utils.ts           # 转发表层 + getPublishedPosts/Docs
+│   │   └── site.ts            # ⭐ 站点配置（标题、头像、社交链接等）
+│   ├── content/
+│   │   ├── blog/ / docs/ / pages/  # Markdown 内容
+│   │   ├── registry.ts        # ⭐ 核心注册表（内容类型 + 路由 + 导航 + 系列）
+│   │   └── utils.ts           # 查询工具 + buildBlogSidebar / computePrevNext
 │   ├── content.config.ts      # Zod Schema
 │   ├── middleware.ts           # 配置注入 Astro.locals.site
-│   ├── pages/                 # 路由（极薄胶水层）
-│   │   ├── blog/[...slug].astro  # 博客详情
-│   │   ├── docs/[...slug].astro  # 文档详情
-│   │   └── ...
-│   └── styles/
-│       └── layout.css         # 应用层布局样式
+│   ├── env.d.ts               # Locals 类型声明
+│   └── pages/                 # 路由（极薄胶水层）
 ├── tsconfig.json              # 路径别名映射到主题包
 └── package.json               # workspaces: ["packages/*"]
 ```
 
-## 配置
+## 配置体系
 
-所有站点级配置在 `src/config/site.ts`：
+### 唯一入口：`src/content/registry.ts`
+
+所有内容类型的路由、导航、首页系列卡片由此一条记录自动推导：
+
+```typescript
+export const contentRegistry = [
+  {
+    id: 'blog',
+    label: '博客',
+    route: { prefix: '/blog', pattern: '/blog/[slug]' },
+    layout: 'post',
+    showInNav: true,
+    series: { description: '散装的技术与生活记录', countLabel: '篇文章', ... },
+  },
+  { id: 'docs', label: '文档', route: { prefix: '/docs', ... }, layout: 'doc', ... },
+];
+```
+
+### 站点信息：`src/config/site.ts`
 
 ```ts
 export const siteConfig = {
@@ -82,19 +94,19 @@ export const siteConfig = {
   author: '栗かな',
   avatar: '/icon.png',
   bio: '日语专业 / 技术探索中',
-  nav: [
-    { href: '/', label: '首页' },
-    { href: '/blog', label: '博客' },
-    { href: '/docs', label: '文档' },
-    { href: '/about', label: '关于' },
-  ],
   social: { github: 'https://github.com/Mepuru' },
-  footer: { icp: '鲁ICP备...', icpUrl: 'https://...' },
+  footer: { icp: '鲁ICP备...', icpUrl: '...' },
   docs: { emptyTexts: [...] },
+  // nav 由 registry 自动生成，如需自定义可在此覆盖
 };
 ```
 
-加导航页、改昵称、换头像——只改这一个文件。配置通过 `src/middleware.ts` 自动注入 `Astro.locals.site`，所有布局组件直接读取。
+### 配置自动注入链路
+
+```
+registry.ts ─→ middleware.ts ─→ Astro.locals.site ─→ 所有布局/组件自动读取
+site.ts ────┘
+```
 
 ## 写博客
 
@@ -110,9 +122,6 @@ draft: false
 ---
 ```
 
-- `draft: true` 标记草稿，构建时自动过滤
-- 图片放 `public/images/` 下，引用 `/images/xxx.png`
-
 ## 写文档
 
 在 `src/content/docs/` 下创建 `.md` 文件：
@@ -126,9 +135,23 @@ draft: false
 ---
 ```
 
-## 架构文档
+## 新增内容类型
 
-完整的代码架构说明在 [/docs/architecture](/docs/architecture)（即 `src/content/docs/architecture.md`），包含数据流、组件层级、主题系统详解和给后续开发者的规则。
+以新增"笔记"为例：
+
+1. `src/content/registry.ts` 加一条注册记录
+2. `src/content.config.ts` 加 `defineCollection`
+3. `src/content/notes/` 放 `.md` 文件
+4. `src/pages/notes/` 建两个极简路由文件
+
+导航栏、首页系列卡片、URL 路径自动生成。详见 `DEVELOPMENT_GUIDE.md`。
+
+## 参考文档
+
+| 文档 | 位置 | 内容 |
+|------|------|------|
+| 开发规范 | `DEVELOPMENT_GUIDE.md` | 命名、CSS、TS 规范、Registry 使用、常见陷阱 |
+| 架构文档 | `/docs/architecture` | 数据流、组件层级、主题系统、给 AI 的规则 |
 
 ## 技术栈
 
@@ -144,7 +167,6 @@ draft: false
 ## 联系方式
 
 - **GitHub**: [Mepuru](https://github.com/Mepuru)
-- **VRChat**: KuriKana
 
 ---
 

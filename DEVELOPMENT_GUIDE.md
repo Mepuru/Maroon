@@ -11,7 +11,7 @@
 | 组件文件 | PascalCase | `Header.astro`, `PostCard.astro`, `DocsSidebar.astro` |
 | 页面路由 | 动态参数用 `[]`，其余 kebab-case | `[...slug].astro`, `[tag].astro`, `index.astro` |
 | 工具函数 | camelCase | `formatDate()`, `estimateReadingTime()`, `getPublishedPosts()` |
-| 类型/接口 | PascalCase | `SiteConfig`, `PostCardProps`, `SeriesConfig` |
+| 类型/接口 | PascalCase | `SiteConfig`, `PostCardProps`, `RoutesConfig` |
 | CSS 类名 | kebab-case | `.post-card`, `.nav-links`, `.sidebar-toggle` |
 | CSS 变量 | kebab-case, `--` 前缀 | `--header-height`, `--font-size-hero-title` |
 | 目录名 | kebab-case | `shared/`, `home/`, `blog/`, `docs/` |
@@ -41,7 +41,7 @@ import type { Props } from '../types';
 
 **原则：**
 - CSS 独立文件管理，不内联 `<style>` 标签（除非极简单的 1–3 条样式）
-- 组件 props 优先用类型接口，定义在组件内或从 `src/types/` 导入
+- 组件 props 优先用类型接口，定义在组件内或从 `@kurikana/astro-theme/types` 导入
 - 每个组件只做一件事
 
 ---
@@ -56,22 +56,17 @@ import type { Props } from '../types';
 import { ViewTransitions } from 'astro:transitions';
 import { getCollection, render } from 'astro:content';
 
-// 2. 本地组件
-import Header from '../components/Header.astro';
-import BaseLayout from '../layouts/BaseLayout.astro';
+// 2. 主题包组件/布局
+import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
 
 // 3. 本地工具函数
-import { formatDate } from '../utils/date';
-import { getPublishedPosts } from '../utils/content';
+import { buildBlogSidebar, computePrevNext } from '../../content/utils';
 
 // 4. 类型
-import type { PostCardProps } from '../types';
+import type { PostCardProps } from '@kurikana/astro-theme/types';
 
-// 5. 数据/配置
-import { siteConfig } from '../config/site';
-
-// 6. 样式
-import '../styles/global.css';
+// 5. 样式
+import '@kurikana/astro-theme/styles/layout.css';
 ---
 ```
 
@@ -81,18 +76,18 @@ import '../styles/global.css';
 
 ### 变量驱动
 
-优先使用 CSS 自定义属性（`var(--xxx)`），**禁止**在组件样式中硬编码颜色、尺寸、圆角值。所有主题色在 `src/styles/base.css` 的 `[data-theme="xxx"]` 中定义。
+优先使用 CSS 自定义属性（`var(--xxx)`），**禁止**在组件样式中硬编码颜色、尺寸、圆角值。所有主题色在 `packages/chestnut-theme/src/styles/base.css` 的 `[data-theme="xxx"]` 中定义。
 
 ```css
 /* ✅ 正确 */
-.doc-nav-link {
+.post-nav-link {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--fg);
 }
 
 /* ❌ 避免 */
-.doc-nav-link {
+.post-nav-link {
   border: 1px solid #ede8e0;
   border-radius: 12px;
   color: #3a3632;
@@ -135,8 +130,8 @@ transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
 - **严格模式** — `tsconfig.json` 继承 `astro/tsconfigs/strict`
 - **Props 接口** — 尽量先用 `interface` 而非 `type`，仅在需要联合/交叉时用 `type`
 - **避免 `any`** — 优先 `unknown` + 类型收窄
-- **类型导出** — 公共类型放在 `src/types/` 目录下，按模块拆分文件
-- **组件 Props** — 定义在组件内或从 `src/types/` 导入：
+- **公共类型** — 放在 `packages/chestnut-theme/src/types/` 中，通过 `@kurikana/astro-theme/types` 导入
+- **组件 Props** — 定义在组件内或从主题包导入：
 
 ```astro
 ---
@@ -183,7 +178,7 @@ src/content/docs/your-doc.md
 title: 文档标题
 pubDate: 2026-05-16
 category: Astro    # 可选，侧边栏按此分组折叠
-draft: false       # 可选
+draft: false
 ---
 ```
 
@@ -200,10 +195,9 @@ draft: false       # 可选
 ### 本地开发
 
 ```bash
-npm run dev        # 启动开发服务器（带热更新）
+npm run dev        # 启动开发服务器（热更新）
 npm run build      # 生产构建 + Pagefind 搜索索引
 npm run preview    # 预览构建产物
-npm run typecheck  # 类型检查（需安装 @astrojs/check）
 ```
 
 ### Git 提交
@@ -211,165 +205,298 @@ npm run typecheck  # 类型检查（需安装 @astrojs/check）
 commit message 用中文，前缀标识改动类型：
 
 ```
-feat: 新功能描述
-fix: 修复的问题描述
-refactor: 重构描述
-docs: 文档更新
-style: 代码格式清理（不影响逻辑）
-chore: 构建配置/工具更新
+feat:     新功能
+fix:      修复问题
+refactor: 重构（不改功能）
+docs:     文档更新
+style:    代码格式清理（不影响逻辑）
+chore:    构建配置/工具更新
 ```
 
 示例：
 
 ```
-fix: 手机端文档上下篇导航溢出 — 纵向堆叠 + 标题截断双重修复
-docs: 补充系列配置和独立页面文档
-style: 移除未使用的 import 和 prop
+feat: 博客详情页增加上下篇导航
+fix: 表格溢出导致页面横向滚动
+refactor: 路径配置统一化 — 硬编码集中到 Astro.locals.site.routes
+docs: 更新架构文档和 README
 ```
 
 ---
 
-## 项目结构参考
+## 配置体系
 
-```
-src/
-├── config/           # 站点配置
-│   ├── site.ts       # 站点元数据、导航、社交链接
-│   ├── series.ts     # 首页系列卡片配置
-│   └── routing.ts    # URL 路由模板集中管理
-├── content/          # 内容框架层
-│   ├── registry.ts   # 内容类型声明式注册表
-│   ├── utils.ts      # 共享查询工具（标签统计、sidebar 构造、文档分组）
-│   ├── blog/         # Markdown 文章
-│   ├── docs/         # Markdown 文档
-│   └── pages/        # Markdown 独立页面
-├── content.config.ts # Astro content collections + Zod schema
-├── middleware.ts     # Astro middleware — 全局配置注入 Astro.locals
-├── env.d.ts         # Astro.locals.site 类型声明
-├── pages/            # 路由页面（极薄层，只做路由分发）
-│   ├── index.astro
-│   ├── about.astro
-│   ├── 404.astro
-│   ├── blog/
-│   │   ├── index.astro
-│   │   └── [...slug].astro
-│   ├── docs/
-│   │   ├── index.astro
-│   │   └── [...slug].astro
-│   └── tags/
-│       └── [tag].astro
-└── packages/
-    └── chestnut-theme/    # 可发布的独立主题包
-        ├── src/
-        │   ├── components/  # 纯 UI 组件（不自知内容结构）
-        │   ├── layouts/     # 布局包装器（从 Astro.locals.site 读取全局配置）
-        │   ├── styles/      # CSS 变量主题系统
-        │   ├── types/       # 组件 Props 类型
-        │   └── utils/       # 工具函数（formatDate, readingTime, themes）
-        └── package.json
-```
+### Registry 驱动一切（核心）
 
----
-
-## 内容类型注册表（Content Registry）
-
-所有内容类型集中在 `src/content/registry.ts` 声明。新增一个内容类型的流程：
-
-### 新内容类型添加流程
-
-1. **Zod Schema** — 在 `src/content.config.ts` 中定义 `defineCollection` + schema
-2. **注册声明** — 在 `src/content/registry.ts` 的 `contentRegistry` 数组加一条配置
-3. **路由文件** — 在 `src/pages/` 下创建 `[typename]/[...slug].astro` 和 `index.astro`
-4. **可选：系列配置** — 如需在首页展示，在 `src/config/series.ts` 加一条
+`src/content/registry.ts` 是**唯一配置入口**。导航、URL 路径、首页系列卡片全部由此自动推导。
 
 ```typescript
-// 示例：在 registry.ts 中注册 "笔记" 类型
-{
-  id: 'notes',
-  label: '笔记',
-  routeKey: 'notes',       // 对应 routing.ts 中的 routes
-  sidebarIncluded: true,   // 是否显示侧边栏
-  series: {
-    description: '学习笔记',
-    countLabel: '篇笔记',
-    align: 'left',
-    sortField: 'pubDate',
-    sortOrder: 'desc',
+export const contentRegistry: ContentTypeConfig[] = [
+  {
+    id: 'blog',
+    label: '博客',
+    route: { prefix: '/blog', pattern: '/blog/[slug]' },
+    layout: 'post',
+    sidebarIncluded: true,
+    showInNav: true,
+    series: {
+      description: '散装的技术与生活记录',
+      countLabel: '篇文章',
+      sortField: 'pubDate',
+      sortOrder: 'desc',
+    },
   },
+  // ...
+];
+```
+
+自动推导函数（`registry.ts` 导出）：
+
+| 函数 | 生成内容 | 被谁消费 |
+|------|---------|---------|
+| `generateRoutes()` | 路由表 → `Astro.locals.site.routes` | 所有组件读取路径 |
+| `generateNavItems()` | 导航栏 → `siteConfig.nav` | Header 渲染 |
+| `generateSeriesConfigs()` | 系列配置 → 首页 | 首页 SeriesCard |
+
+### Middleware 注入
+
+`src/middleware.ts` 在每次请求时将配置注入 `Astro.locals.site`：
+
+```ts
+context.locals.site = {
+  ...siteConfig,       // title, avatar, bio, nav（由 registry 生成）...
+  themes,              // 主题列表（来自主题包）
+  defaultTheme,        // 默认主题
+  routes,              // 路由表（由 registry 生成）
+};
+```
+
+Layout 读取优先级：`props → Astro.locals.site → 硬编码兜底`
+
+### 站点个性化
+
+`src/config/site.ts` 中的 `siteConfig` 控制：
+
+```ts
+{
+  title: '栗かな',      // 站点标题
+  author: '栗かな',     // 作者
+  avatar: '/icon.png',  // 头像
+  bio: '日语专业...',   // 简介
+  social: { github },   // 社交链接
+  footer: { icp },      // 备案号
+  docs: { emptyTexts }, // 文档空状态文案
 }
 ```
 
-### 路由文件编写规范
+导航由 registry 自动生成，如需自定义可在 `site.ts` 中覆盖 `nav` 字段。
 
-页面文件保持极薄：
-
-```astro
----
-// 只做三件事：加载数据、构造 props、渲染 layout
-import DocsLayout from '@kurikana/astro-theme/layouts/DocsLayout.astro';
-import { groupDocsByCategory } from '../../content/utils';
-
-const allDocs = await getCollection('docs');
-const { publishedDocs, categories } = groupDocsByCategory(allDocs);
 ---
 
-<DocsLayout
-  title="文档"
-  categories={categories}
-  totalCount={publishedDocs.length}
-  // 全局配置由 Astro.locals.site 自动注入，无需手动传参
->
+## 项目结构
+
+```
+chestnut-astro/
+├── packages/
+│   └── chestnut-theme/        # @kurikana/astro-theme — 独立主题包
+│       ├── src/
+│       │   ├── components/     # UI 组件
+│       │   │   ├── blog/       #   PostCard
+│       │   │   ├── docs/       #   DocsSidebar
+│       │   │   ├── home/       #   Hero, SeriesCard, SeriesSection
+│       │   │   ├── shared/     #   Sidebar, TOC, PageNav ⭐
+│       │   │   ├── Header.astro / Footer.astro / Search.astro
+│       │   ├── layouts/
+│       │   │   ├── BaseLayout.astro   # 根布局
+│       │   │   ├── PostLayout.astro   # 博客文章
+│       │   │   └── DocsLayout.astro    # 文档
+│       │   ├── styles/          # CSS 变量、排版、布局
+│       │   ├── types/           # SiteConfig, RoutesConfig, PostCardProps...
+│       │   └── utils/           # formatDate, estimateReadingTime, themes, content
+│       └── package.json
+│
+├── src/                       # 主应用 — 胶水层
+│   ├── config/
+│   │   └── site.ts            # ⭐ 站点配置（唯一修改入口）
+│   ├── content/
+│   │   ├── blog/ / docs/ / pages/  # Markdown 内容
+│   │   ├── registry.ts        # ⭐ 内容类型注册表（核心配置）
+│   │   └── utils.ts           # 查询工具 + helper 函数
+│   ├── content.config.ts      # Zod Schema
+│   ├── middleware.ts           # 配置注入
+│   ├── env.d.ts               # Locals 类型声明
+│   └── pages/                 # 路由（极薄胶水层）
+├── tsconfig.json              # 路径别名 → 主题包
+└── astro.config.mjs
 ```
 
 ---
 
-## Middleware 机制
+## 新增内容类型完整流程
 
-`src/middleware.ts` 在每次请求时自动将全局站点配置注入 `Astro.locals.site`：
+以新增"笔记"类型为例，需完成以下 4 步：
 
-| 字段 | 来源 | 说明 |
-|------|------|------|
-| `title`, `description`, `author` | `src/config/site.ts` | 站点元数据 |
-| `nav` | `src/config/site.ts` | 导航链接 |
-| `themes` | `@kurikana/astro-theme/utils/themes` | 主题列表 |
-| `defaultTheme` | `@kurikana/astro-theme/utils/themes` | 默认主题 |
-| `routes` | `src/config/routing.ts` | URL 路由表 |
+### 1. Registry 注册
 
-Layout 优先读取 `Astro.locals.site`（由 middleware 注入），也接受 props 传入作为覆盖（向后兼容）。
+`src/content/registry.ts` 加一条配置：
+
+```typescript
+{
+  id: 'notes',
+  label: '笔记',
+  route: { prefix: '/notes', pattern: '/notes/[slug]' },
+  layout: 'post',              // 使用 PostLayout 样式
+  sidebarIncluded: false,
+  showInNav: true,             // 导航栏自动出现
+  series: {
+    description: '学习笔记',
+    countLabel: '篇笔记',
+    sortField: 'pubDate',
+    sortOrder: 'desc',
+  },                           // 首页自动出现系列卡片
+}
+```
+
+### 2. Zod Schema
+
+`src/content.config.ts` 中定义集合：
+
+```typescript
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/notes' }),
+  schema: z.object({ title: z.string(), pubDate: z.coerce.date(), draft: z.boolean().default(false) }),
+});
+export const collections = { blog, docs, pages, notes };
+```
+
+### 3. 内容目录
+
+`src/content/notes/` 下放 `.md` 文件。
+
+### 4. 路由文件
+
+`src/pages/notes/` 下创建两个极简文件：
+
+**`src/pages/notes/index.astro`**
+```astro
+---
+import BaseLayout from '@kurikana/astro-theme/layouts/BaseLayout.astro';
+import PostCard from '@kurikana/astro-theme/components/blog/PostCard.astro';
+import '@kurikana/astro-theme/styles/layout.css';
+import { getPublishedPosts } from '../../content/utils';
+
+const posts = await getPublishedPosts();
+---
+<BaseLayout title="笔记">
+  <h1 class="page-title">笔记</h1>
+  <!-- 渲染列表 -->
+</BaseLayout>
+```
+
+**`src/pages/notes/[...slug].astro`**
+```astro
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '@kurikana/astro-theme/layouts/PostLayout.astro';
+import { estimateReadingTime } from '@kurikana/astro-theme/utils/reading-time';
+import '@kurikana/astro-theme/styles/layout.css';
+import { buildBlogSidebar, computePrevNext } from '../../content/utils';
+
+export async function getStaticPaths() { /* 同 blog */ }
+const post = Astro.props;
+const { Content, headings } = await render(post);
+const ctx = Astro.locals.site;
+const { posts, sidebarData } = await buildBlogSidebar(ctx);
+const { prev, next } = computePrevNext(posts, post.id);
+---
+<PostLayout sidebar={false} ...>
+  <Content />
+</PostLayout>
+```
+
+**完成后自动生效**：导航栏出现"笔记"入口、首页出现系列卡片、URL `/notes/xxx` 自动可用。
 
 ---
 
-## 共享工具函数
+## 共享组件
 
-位于 `src/content/utils.ts`：
+| 组件 | 位置 | 用途 | 使用方式 |
+|------|------|------|---------|
+| **Sidebar** | `shared/Sidebar.astro` | 博客侧边栏（个人资料+标签云） | 由 BaseLayout 按需渲染 |
+| **TOC** | `shared/TOC.astro` | 文章目录（h2/h3 自动高亮） | `<TOC headings={headings} />` |
+| **PageNav** | `shared/PageNav.astro` | 上下篇导航 | `<PageNav prev={prev} next={next} prefix="/blog" />` |
+| **PostCard** | `blog/PostCard.astro` | 文章卡片 | `<PostCard title slug pubDate ... />` |
+| **DocsSidebar** | `docs/DocsSidebar.astro` | 文档分类导航 | 由 DocsLayout 自动渲染 |
 
-| 函数 | 功能 | 消除的重复 |
-|------|------|-----------|
-| `getTagStats(posts)` | 提取标签并统计频次 | blog 三处重复 |
-| `buildSidebarData(siteConfig, posts)` | 构造侧边栏数据 | blog 三处重复 |
-| `groupDocsByCategory(docs)` | 按 category 分组文档 | docs 两处重复 |
-| `getPublishedPosts()` | 获取已发布文章 | 统一入口 |
-| `getPublishedDocs()` | 获取已发布文档 | 统一入口 |
+### Astro.locals.site 可用字段
+
+所有布局和组件可安全读取以下字段（带可选链）：
+
+```typescript
+Astro.locals.site = {
+  title, description, author, avatar, icon, bio,  // 站点信息
+  nav: [{ href, label }],                          // 导航栏（registry 生成）
+  social: { github },                              // 社交链接
+  footer: { icp, icpUrl },                         // 备案号
+  docs: { emptyTexts },                            // 文档空状态
+  themes: [{ id, name }],                          // 主题列表
+  defaultTheme,                                    // 默认主题
+  routes: { blog, docs, tags, about, home, icon }, // 路由表
+};
+```
 
 ---
 
-## 主题包 URL 解耦
+## 主题系统
 
-主题包组件通过可选 props 避免硬编码 URL：
+三套预设主题：**奶油（cream）** / **樱花（sakura）** / **星空（starry）**
 
-| 组件 | Prop | 默认值 |
-|------|------|--------|
-| `PostCard` | `itemUrl?: string` | `/blog/{slug}` |
-| `DocsSidebar` | `docUrlPrefix?: string` | `/docs` |
-| `Sidebar` | `tagUrlPrefix?: string` | `/tags` |
+通过 CSS 自定义属性 + `data-theme` 属性切换。主题切换由 Header 的 theme-switcher 控制，选择写入 `localStorage`。
 
-外部站点可以传入自定义 URL 覆盖默认路径，主题包不依赖站点内容结构。
+### 增加新主题
+
+改主题包的两个文件：
+
+1. `packages/chestnut-theme/src/utils/themes.ts` 加 `{ id, name }`
+2. `packages/chestnut-theme/src/styles/base.css` 加 `[data-theme="xxx"]` 变量块
+
+必须覆盖的 CSS 变量：
+`--bg`, `--fg`, `--accent`, `--accent-light`, `--border`, `--muted`, `--card-bg`, `--code-bg`, `--header-bg`, `--search-bg`, `--shadow-*`, `--gradient-*`, `--theme-label`, `--radius-*`
 
 ---
 
-## 主题添加流程
+## 常见陷阱
 
-1. `packages/chestnut-theme/src/utils/themes.ts` 添加 `{ id, name }`
-2. `packages/chestnut-theme/src/styles/base.css` 添加 `[data-theme="xxx"]` 变量块
+### Astro 模板变量
 
-CSS 变量必须覆盖：`--bg`, `--fg`, `--accent`, `--accent-light`, `--border`, `--muted`, `--card-bg`, `--code-bg`, `--header-bg`, `--search-bg`, `--shadow-*`, `--gradient-*`, `--theme-label`, `--radius-*`。
+```astro
+<!-- ✅ 正确：无引号表示变量 -->
+<a href={blogPrefix}>返回列表</a>
+
+<!-- ❌ 错误：带引号是字面量，渲染为 "{blogPrefix}" -->
+<a href="{blogPrefix}">返回列表</a>
+```
+
+### 表格溢出
+
+表格内容过宽会撑破页面布局，导致固定定位的 TOC 按钮偏移。已通过 `prose.css` 全局修复：
+```css
+.prose table { display: block; max-width: 100%; overflow-x: auto; }
+```
+
+### flex 项溢出
+
+`white-space: nowrap` + `flex: 1` 的容器必须加 `min-width: 0` 才能正确截断：
+```css
+.flex-item { flex: 1; min-width: 0; }
+```
+
+### 给后续开发者 / AI 的规则
+
+1. **每个逻辑阶段完成后必须 `git commit`**
+2. **不在组件中硬编码路径/文案**——一律从 `Astro.locals.site.routes` 读取
+3. **新增内容查询用 `src/content/utils.ts` 的工具函数**，不重复写 `getCollection().filter().sort()`
+4. **所有 `getCollection` 必须包裹 try/catch**
+5. **CSS 尺寸用变量**（`--sidebar-width`、`--header-height`）
+6. **发布前先 `npm run build`** 验证零报错
+7. **改代码后同步更新本文档**
