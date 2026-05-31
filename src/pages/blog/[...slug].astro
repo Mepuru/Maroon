@@ -27,6 +27,11 @@ const sidebarData = buildSidebarData(
   { avatar: ctx?.avatar ?? '/icon.png', author: ctx?.author ?? '', bio: ctx?.bio ?? '', social: { github: ctx?.social?.github } },
   publishedPosts,
 );
+
+// 上下篇导航
+const currentIndex = publishedPosts.findIndex((p) => p.id === post.id);
+const prev = currentIndex > 0 ? publishedPosts[currentIndex - 1] : null;
+const next = currentIndex < publishedPosts.length - 1 ? publishedPosts[currentIndex + 1] : null;
 ---
 
 <PostLayout
@@ -38,6 +43,8 @@ const sidebarData = buildSidebarData(
   tags={post.data.tags}
   readingTime={estimateReadingTime(post.body ?? '')}
   headings={headings}
+  prev={prev ? { title: prev.data.title, slug: prev.id } : undefined}
+  next={next ? { title: next.data.title, slug: next.id } : undefined}
 >
   <Content />
 </PostLayout>
