@@ -1,3 +1,4 @@
+import type { SortField, SortOrder } from '@kurikana/astro-theme/types';
 import { getCollection } from 'astro:content';
 
 import {
@@ -15,35 +16,60 @@ export type {
 export { getTagStats, buildSidebarData, groupDocsByCategory };
 
 // ============================================================
+// 通用排序
+// ============================================================
+
+/**
+ * 对 collection entry 数组按指定字段和顺序排序
+ */
+export function sortContentItems<T extends { data: Record<string, unknown> }>(
+  items: T[],
+  sortField: SortField,
+  sortOrder: SortOrder,
+): T[] {
+  return [...items].sort((a, b) => {
+    const valueA = a.data[sortField];
+    const valueB = b.data[sortField];
+    if (sortOrder === 'desc') {
+      return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
+    }
+    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+  });
+}
+
+// ============================================================
 // 通用查询工具
 // ============================================================
 
 /**
- * 获取已发布的文章（blog），按日期降序
+ * 获取指定 collection 中已发布的条目，支持自定义排序
  */
-export async function getPublishedPosts() {
+export async function getPublishedContent(
+  collectionId: string,
+  options?: { sortField?: SortField; sortOrder?: SortOrder },
+) {
   try {
-    const posts = await getCollection('blog');
-    return posts
-      .filter((p) => !p.data.draft)
-      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    const items = await getCollection(collectionId as 'blog' | 'docs');
+    const filtered = items.filter((item) => !item.data.draft);
+    const { sortField = 'pubDate', sortOrder = 'desc' } = options ?? {};
+    return sortContentItems(filtered, sortField, sortOrder);
   } catch {
     return [];
   }
 }
 
 /**
+ * 获取已发布的文章（blog），按日期降序
+ */
+export async function getPublishedPosts() {
+  return getPublishedContent('blog');
+}
+
+/**
  * 获取已发布的文档，按日期降序
  */
 export async function getPublishedDocs() {
-  try {
-    const docs = await getCollection('docs');
-    return docs
-      .filter((d) => !d.data.draft)
-      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-  } catch {
-    return [];
-  }
+  return getPublishedContent('docs');
 }
 
 // ============================================================
