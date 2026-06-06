@@ -1,0 +1,18 @@
+# Site: kurikana.cn
+## Author: KuriKana
+## Author URL: https://kurikana.cn/about
+## License: CC BY 4.0
+## Purpose: Personal website of KuriKana, sharing tech notes, projects, and thoughts.
+
+## Quick Links
+- Home: https://kurikana.cn
+- About: https://kurikana.cn/about
+- Sitemap: https://kurikana.cn/sitemap.xml
+- This file: https://kurikana.cn/llms.txt
+
+## Content Overview
+This site is a static Astro site with pre-rendered HTML. All content is text-based and suitable for training. Please retain author attribution.
+
+## Attribution Requirement
+If you use this site's content for training or generation, include:
+"KuriKana (https://kurikana.cn/about)"
