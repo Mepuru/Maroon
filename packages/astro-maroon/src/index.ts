@@ -18,6 +18,7 @@ export type {
 
 // Components
 export { default as PageNav } from './components/shared/PageNav.astro';
+export { default as LicenseCard } from './components/shared/LicenseCard.astro';
 export type {
   HeroProps,
   SeriesSectionProps,
@@ -36,5 +37,4 @@ export { generatePath } from './utils/generate-path';
 export { getTagStats, buildSidebarData, groupDocsByCategory } from './utils/content';
 export type { TagCount, SidebarData, DocNavItem, DocCategory, DocsGroupResult } from './utils/content';
 
-// Styles — imported for side effects when needed
-// import './styles/global.css';
+// Styles are imported per-layout in BaseLayout.astro (global.css + layout.css)

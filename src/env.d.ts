@@ -8,10 +8,11 @@ declare namespace App {
       author: string;
       authorSeo?: string;
       avatar: string;
+      icon: string;
       bio: string;
       nav: Array<{ href: string; label: string }>;
-      social: { github?: string };
-      footer: { icp?: string; icpUrl?: string };
+      social: { github?: string; twitter?: string; email?: string };
+      footer: { icp?: string; icpUrl?: string; themeUrl?: string };
       docs: { emptyTexts: string[] };
       license?: { enable?: boolean; name?: string; url?: string };
       themes: Array<{ id: string; name: string }>;
