@@ -1,5 +1,5 @@
 # Author: KuriKana (https://kurikana.cn/about)
-# 允许所有合法爬虫，但希望保留署名
+# Allow all legitimate crawlers. Attribution appreciated.
 
 User-agent: *
 Allow: /
