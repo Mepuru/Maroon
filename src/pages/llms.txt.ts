@@ -7,7 +7,6 @@ export async function GET() {
     `## Author: KuriKana`,
     `## Author URL: ${authorUrl}`,
     `## License: CC BY 4.0`,
-    `## Purpose: Personal blog sharing tech notes, projects, and thoughts`,
     '',
     '## Quick Links',
     `- Home: ${siteUrl}`,
