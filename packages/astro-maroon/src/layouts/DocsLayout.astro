@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import DocsSidebar from '../components/docs/DocsSidebar.astro';
 import TOC from '../components/shared/TOC.astro';
+import LicenseCard from '../components/shared/LicenseCard.astro';
 import PageNav from '../components/shared/PageNav.astro';
 import { formatDate } from '../utils/date';
 
@@ -102,6 +103,9 @@ const authorUrl = docCtx?.routes?.about ? `${siteOrigin}${docCtx.routes.about}` 
           <div class="doc-content prose">
             <slot />
           </div>
+          {docCtx?.license?.enable !== false && (
+            <LicenseCard title={title} pubDate={pubDate} author={docCtx?.author ?? ''} />
+          )}
           <PageNav prev={prev} next={next} pattern={docsPattern} />
         </article>
       ) : (

@@ -107,6 +107,11 @@ export const siteConfig: SiteConfig = {
     icpUrl: 'https://beian.miit.gov.cn/',
     themeUrl: 'https://github.com/Mepuru/Maroon',
   },
+  license: {
+    enable: true,
+    name: 'CC BY 4.0',
+    url: 'https://creativecommons.org/licenses/by/4.0/',
+  },
   docs: {
     emptyTexts: [
       '『 四季轮回 岁岁年年 』',

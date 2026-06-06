@@ -13,6 +13,7 @@ declare namespace App {
       social: { github?: string };
       footer: { icp?: string; icpUrl?: string };
       docs: { emptyTexts: string[] };
+      license?: { enable?: boolean; name?: string; url?: string };
       themes: Array<{ id: string; name: string }>;
       defaultTheme: string;
       routes: import('astro-maroon/types/site').RoutesConfig;

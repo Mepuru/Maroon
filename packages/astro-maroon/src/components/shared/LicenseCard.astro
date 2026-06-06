@@ -1,0 +1,49 @@
+---
+import { formatDate } from '../../utils/date';
+
+interface Props {
+  title: string;
+  pubDate: Date;
+  author: string;
+}
+
+const { title, pubDate, author } = Astro.props;
+const pageUrl = Astro.url.href;
+const license = Astro.locals.site?.license;
+const licenseName = license?.name ?? 'CC BY 4.0';
+const licenseUrl = license?.url ?? 'https://creativecommons.org/licenses/by/4.0/';
+const dateStr = formatDate(pubDate);
+---
+
+<div class="license-card">
+  <div class="license-watermark">
+    <svg viewBox="0 0 100 100" fill="currentColor">
+      <circle cx="50" cy="50" r="45"/>
+      <text x="50" y="62" text-anchor="middle" font-size="28" fill="white" font-family="Arial,sans-serif" font-weight="bold">CC</text>
+    </svg>
+  </div>
+
+  <div class="license-content">
+    <div class="license-title">{title}</div>
+    <a href={pageUrl} class="license-url">{pageUrl}</a>
+
+    <div class="license-meta">
+      <div class="license-field">
+        <span class="license-label">作者</span>
+        <span class="license-value">{author}</span>
+      </div>
+      <div class="license-field">
+        <span class="license-label">发布</span>
+        <span class="license-value">{dateStr}</span>
+      </div>
+      <div class="license-field">
+        <span class="license-label">协议</span>
+        <a href={licenseUrl} target="_blank" rel="noopener" class="license-link">{licenseName}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @import './LicenseCard.css';
+</style>

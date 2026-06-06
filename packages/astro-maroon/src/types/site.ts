@@ -42,6 +42,11 @@ export interface SiteConfig {
   docs: {
     emptyTexts: string[];
   };
+  license?: {
+    enable?: boolean;
+    name?: string;
+    url?: string;
+  };
 }
 
 export interface ThemeConfig {
