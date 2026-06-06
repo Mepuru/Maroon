@@ -1,0 +1,7 @@
+# Author: KuriKana (https://kurikana.cn/about)
+# 允许所有合法爬虫，但希望保留署名
+
+User-agent: *
+Allow: /
+
+Sitemap: https://kurikana.cn/sitemap.xml
