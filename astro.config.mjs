@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 
@@ -6,6 +7,7 @@ export default defineConfig({
   site: 'https://kurikana.cn',
   output: 'static',
   integrations: [
+    sitemap(),
     expressiveCode({
       themes: ['github-dark'],
       plugins: [pluginLineNumbers()],

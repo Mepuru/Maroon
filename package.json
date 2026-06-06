@@ -15,6 +15,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@expressive-code/plugin-collapsible-sections": "^0.42.0",
     "@expressive-code/plugin-line-numbers": "^0.42.0",
     "astro": "5.7.10",
