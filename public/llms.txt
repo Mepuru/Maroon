@@ -7,7 +7,7 @@
 ## Quick Links
 - Home: https://kurikana.cn
 - About: https://kurikana.cn/about
-- Sitemap: https://kurikana.cn/sitemap.xml
+- Sitemap: https://kurikana.cn/sitemap-index.xml
 - This file: https://kurikana.cn/llms.txt
 
 ## Content Overview

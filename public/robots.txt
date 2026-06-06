@@ -4,4 +4,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kurikana.cn/sitemap.xml
+Sitemap: https://kurikana.cn/sitemap-index.xml
