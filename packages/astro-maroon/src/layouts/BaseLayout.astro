@@ -36,6 +36,10 @@ interface Props {
   // Page-level
   title?: string;
   description?: string;
+  // SEO: OG 图片 URL（绝对路径，默认 /icon.png）
+  image?: string;
+  /** SEO: 当前页面的规范 URL（默认自动从 site + path 拼接） */
+  url?: string;
   // Sidebar (optional)
   sidebar?: boolean;
   sidebarData?: {
@@ -70,6 +74,11 @@ const { sidebar = false, sidebarData, fullWidth = false } = Astro.props;
 
 const routes = Astro.locals.site?.routes;
 const iconUrl = routes?.icon ?? '/favicon.svg';
+
+// SEO: OG 图片 & 规范 URL（允许 props 覆盖）
+const siteOrigin = 'https://kurikana.cn';
+const ogImage = Astro.props.image ?? `${siteOrigin}/icon.png`;
+const canonicalUrl = Astro.props.url ?? `${siteOrigin}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -79,12 +88,54 @@ const iconUrl = routes?.icon ?? '/favicon.svg';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href={iconUrl} />
+
+    <!-- Author & License -->
+    <meta name="author" content="KuriKana" />
+    <link rel="author" href="https://kurikana.cn/about" />
+    <link rel="license" href="https://creativecommons.org/licenses/by/4.0/" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteTitle} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalUrl} />
+
     <ViewTransitions />
     <title>{title}</title>
     <script is:inline>
       const stored = localStorage.getItem('theme');
       if (stored) document.documentElement.setAttribute('data-theme', stored);
     </script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "KuriKana",
+      "url": canonicalUrl,
+      "description": description,
+      "author": {
+        "@type": "Person",
+        "name": "KuriKana",
+        "url": "https://kurikana.cn/about"
+      },
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "copyrightHolder": {
+        "@type": "Person",
+        "name": "KuriKana"
+      }
+    })} />
   </head>
   <body>
     <div class="print-meta" style="display:none">{siteTitle} | {Astro.url.href}</div>
