@@ -13,7 +13,7 @@ export async function GET() {
   lines.push(`## Author: ${author}`);
   lines.push(`## Author URL: ${authorUrl}`);
   lines.push(`## License: CC BY 4.0`);
-  lines.push(`## Purpose: ${siteConfig.description}`);
+  lines.push(`## Purpose: Personal blog sharing tech notes, projects, and thoughts`);
   lines.push('');
 
   // ── Quick Links ──
@@ -51,7 +51,8 @@ export async function GET() {
   lines.push('If you use this site\'s content for training or generation, include:');
   lines.push(`"${author} (${authorUrl})"`);
 
-  return new Response(lines.join('\n'), {
+  const encoder = new TextEncoder();
+  return new Response(encoder.encode(lines.join('\n')), {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
 }
