@@ -61,6 +61,8 @@ const blogPattern = routes?.blog?.pattern ?? '/blog/[slug]';
 const blogPrefix = routes?.blog?.prefix ?? '/blog';
 
 const dateStr = formatDate(pubDate);
+const articleUrl = Astro.props.url ?? Astro.url.href;
+const isoDate = pubDate.toISOString();
 ---
 
 <BaseLayout
@@ -98,6 +100,23 @@ const dateStr = formatDate(pubDate);
     </article>
   </div>
 </BaseLayout>
+
+<!-- JSON-LD BlogPosting -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "datePublished": isoDate,
+  "author": {
+    "@type": "Person",
+    "name": "KuriKana",
+    "url": "https://kurikana.cn/about"
+  },
+  "url": articleUrl,
+  "image": image ?? "https://kurikana.cn/icon.png",
+  ...(tags.length > 0 && { keywords: tags.join(", ") })
+})} />
 
 <button class="post-toc-toggle" id="post-toc-toggle" aria-label="切换目录">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

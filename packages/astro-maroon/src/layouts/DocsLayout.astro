@@ -64,6 +64,8 @@ const docsPattern = routes?.docs?.pattern ?? '/docs/[slug]';
 const dateStr = pubDate ? formatDate(pubDate) : '';
 const hasDoc = !!currentSlug;
 const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
+const docUrl = Astro.props.url ?? Astro.url.href;
+const isoDate = pubDate ? pubDate.toISOString() : '';
 ---
 
 <BaseLayout
@@ -127,8 +129,23 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
       <line x1="3" y1="12" x2="15" y2="12"/>
       <line x1="3" y1="18" x2="18" y2="18"/>
     </svg>
-  </button>
+    </button>
 </BaseLayout>
+
+{hasDoc && <script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": description,
+  "datePublished": isoDate,
+  "author": {
+    "@type": "Person",
+    "name": "KuriKana",
+    "url": "https://kurikana.cn/about"
+  },
+  "url": docUrl,
+  "image": image ?? "https://kurikana.cn/icon.png"
+})} />}
 
 <style>
   .doc-empty {
