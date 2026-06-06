@@ -43,6 +43,9 @@ interface Props {
   uncategorized?: DocNavItem[];
   // Empty state
   emptyTexts?: string[];
+  // SEO（透传给 BaseLayout）
+  image?: string;
+  url?: string;
 }
 
 const {
@@ -50,6 +53,7 @@ const {
   currentSlug, headings = [], prev, next,
   categories, totalCount, uncategorized = [],
   emptyTexts = ['← 从左侧选择一篇文档'],
+  image, url,
 } = Astro.props;
 
 // 截断过长的标题
@@ -66,6 +70,8 @@ const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
   title={`${title} - 文档`}
   description={description}
   fullWidth={true}
+  {image}
+  {url}
 >
   <div class="docs-page">
     <DocsSidebar

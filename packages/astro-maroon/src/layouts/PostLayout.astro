@@ -43,6 +43,9 @@ interface Props {
   // 上下篇导航
   prev?: { title: string; slug: string };
   next?: { title: string; slug: string };
+  // SEO（透传给 BaseLayout）
+  image?: string;
+  url?: string;
 }
 
 const {
@@ -50,6 +53,7 @@ const {
   sidebarData,
   title, description, pubDate, tags = [], readingTime, headings = [],
   prev, next,
+  image, url,
 } = Astro.props;
 
 const routes = Astro.locals.site?.routes;
@@ -65,6 +69,8 @@ const dateStr = formatDate(pubDate);
   sidebar={sidebar}
   sidebarData={sidebarData}
   fullWidth={true}
+  {image}
+  {url}
 >
   <div class="post-page">
       <aside class="post-toc" id="post-toc">
