@@ -66,6 +66,12 @@ const hasDoc = !!currentSlug;
 const emptyText = emptyTexts[Math.floor(Math.random() * emptyTexts.length)];
 const docUrl = Astro.props.url ?? Astro.url.href;
 const isoDate = pubDate ? pubDate.toISOString() : '';
+
+// SEO author — 优先取 props，其次站点配置
+const docCtx = Astro.locals.site;
+const siteOrigin = Astro.site?.origin ?? '';
+const authorSeo = docCtx?.authorSeo ?? docCtx?.author;
+const authorUrl = docCtx?.routes?.about ? `${siteOrigin}${docCtx.routes.about}` : `${siteOrigin}/about`;
 ---
 
 <BaseLayout
@@ -140,11 +146,11 @@ const isoDate = pubDate ? pubDate.toISOString() : '';
   "datePublished": isoDate,
   "author": {
     "@type": "Person",
-    "name": "KuriKana",
-    "url": "https://kurikana.cn/about"
+    "name": authorSeo,
+    "url": authorUrl
   },
   "url": docUrl,
-  "image": image ?? "https://kurikana.cn/icon.png"
+  "image": image ?? `${siteOrigin}/icon.png`
 })} />}
 
 <style>

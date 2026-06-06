@@ -6,6 +6,7 @@ declare namespace App {
       title: string;
       description: string;
       author: string;
+      authorSeo?: string;
       avatar: string;
       bio: string;
       nav: Array<{ href: string; label: string }>;

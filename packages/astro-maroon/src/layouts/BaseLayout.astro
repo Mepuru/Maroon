@@ -31,6 +31,8 @@ interface Props {
   themes?: ThemeItem[];
   defaultTheme?: string;
   author?: string;
+  /** SEO 署名用作者名（覆盖 author） */
+  authorSeo?: string;
   icp?: string;
   icpUrl?: string;
   // Page-level
@@ -76,9 +78,13 @@ const routes = Astro.locals.site?.routes;
 const iconUrl = routes?.icon ?? '/favicon.svg';
 
 // SEO: OG 图片 & 规范 URL（允许 props 覆盖）
-const siteOrigin = 'https://kurikana.cn';
+const siteOrigin = Astro.site?.origin ?? '';
 const ogImage = Astro.props.image ?? `${siteOrigin}/icon.png`;
 const canonicalUrl = Astro.props.url ?? `${siteOrigin}${Astro.url.pathname}`;
+
+// SEO author — 优先取 props，其次站点配置
+const authorSeo = Astro.props.authorSeo ?? ctx?.authorSeo ?? author;
+const authorUrl = routes?.about ? `${siteOrigin}${routes.about}` : `${siteOrigin}/about`;
 ---
 
 <!doctype html>
@@ -90,8 +96,8 @@ const canonicalUrl = Astro.props.url ?? `${siteOrigin}${Astro.url.pathname}`;
     <link rel="icon" type="image/svg+xml" href={iconUrl} />
 
     <!-- Author & License -->
-    <meta name="author" content="KuriKana" />
-    <link rel="author" href="https://kurikana.cn/about" />
+    <meta name="author" content={authorSeo} />
+    <link rel="author" href={authorUrl} />
     <link rel="license" href="https://creativecommons.org/licenses/by/4.0/" />
 
     <!-- Open Graph -->
@@ -116,18 +122,18 @@ const canonicalUrl = Astro.props.url ?? `${siteOrigin}${Astro.url.pathname}`;
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "KuriKana",
+      "name": authorSeo,
       "url": canonicalUrl,
       "description": description,
       "author": {
         "@type": "Person",
-        "name": "KuriKana",
-        "url": "https://kurikana.cn/about"
+        "name": authorSeo,
+        "url": authorUrl
       },
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "copyrightHolder": {
         "@type": "Person",
-        "name": "KuriKana"
+        "name": authorSeo
       }
     })} />
   </head>

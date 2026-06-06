@@ -93,6 +93,7 @@ export const siteConfig: SiteConfig = {
   title: '栗かな',
   description: '记录生活与技术的个人博客',
   author: '栗かな',
+  authorSeo: 'KuriKana',
   avatar: '/icon.png',
   icon: '/icon.png',
   bio: '日语专业 / 技术探索中',

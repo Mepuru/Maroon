@@ -63,6 +63,12 @@ const blogPrefix = routes?.blog?.prefix ?? '/blog';
 const dateStr = formatDate(pubDate);
 const articleUrl = Astro.props.url ?? Astro.url.href;
 const isoDate = pubDate.toISOString();
+
+// SEO author — 优先取 props，其次站点配置
+const postCtx = Astro.locals.site;
+const siteOrigin = Astro.site?.origin ?? '';
+const authorSeo = postCtx?.authorSeo ?? postCtx?.author;
+const authorUrl = postCtx?.routes?.about ? `${siteOrigin}${postCtx.routes.about}` : `${siteOrigin}/about`;
 ---
 
 <BaseLayout
@@ -110,11 +116,11 @@ const isoDate = pubDate.toISOString();
   "datePublished": isoDate,
   "author": {
     "@type": "Person",
-    "name": "KuriKana",
-    "url": "https://kurikana.cn/about"
+    "name": authorSeo,
+    "url": authorUrl
   },
   "url": articleUrl,
-  "image": image ?? "https://kurikana.cn/icon.png",
+  "image": image ?? `${siteOrigin}/icon.png`,
   ...(tags.length > 0 && { keywords: tags.join(", ") })
 })} />
 

@@ -23,6 +23,8 @@ export interface SiteConfig {
   title: string;
   description: string;
   author: string;
+  /** SEO 署名用作者名（不设则默认用 author） */
+  authorSeo?: string;
   avatar: string;
   bio: string;
   icon: string;
