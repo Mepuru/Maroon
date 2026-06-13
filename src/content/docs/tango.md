@@ -28,7 +28,7 @@ function render() {
          + '<td class="lesson-label">' + w.lesson + '</td></tr>';
   }
   document.getElementById("tbody").innerHTML = html;
-  document.getElementById("count").textContent = filtered.length + " / " + WORDS.length + " 词";
+  document.getElementById("count").textContent = filtered.length + " / " + WORDS.length;
 }
 
 function filterLesson(val) { lesson = val; render(); }
@@ -41,49 +41,114 @@ function setMode(m) {
 </script>
 
 <style is:inline>
-.controls {
+/* ── 控制栏 ── */
+.tango-header {
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-  margin-bottom: 1rem; padding: 0.75rem 1rem;
-  background: var(--surface-card, #f5f5f5); border-radius: 8px;
+  margin-bottom: 1.5rem;
 }
-.controls select, .controls input {
-  padding: 0.4rem 0.6rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem;
+.tango-header .brand {
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em;
+  color: var(--color-accent, #3185a1);
+  margin-right: 0.5rem;
+}
+.tango-header select {
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  border: 1.5px solid #d0d0d0; border-radius: 8px;
+  font-size: 0.85rem; background: var(--bg, #fff);
+  cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.5rem center;
+  transition: border-color 0.2s;
+}
+.tango-header select:hover { border-color: #999; }
+.tango-header select:focus { outline: none; border-color: #3185a1; }
+
+/* ── 模式按钮 ── */
+.mode-group {
+  display: flex; gap: 0; border: 1.5px solid #d0d0d0; border-radius: 8px; overflow: hidden;
 }
 .mode-btn {
-  padding: 0.4rem 0.8rem; border: 1px solid #aaa; border-radius: 4px;
-  background: transparent; cursor: pointer; font-size: 0.85rem;
+  padding: 0.4rem 0.85rem; border: none; background: transparent;
+  font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+  color: #555;
+}
+.mode-btn + .mode-btn {
+  border-left: 1.5px solid #d0d0d0;
+}
+.mode-btn:hover {
+  background: #f0f0f0;
 }
 .mode-btn.active {
-  background: #3185a1; color: #fff; border-color: #3185a1;
+  background: #3185a1; color: #fff; font-weight: 500;
 }
-table.wordlist {
-  width: 100%; border-collapse: collapse; font-size: 0.95rem;
+
+/* ── 统计 ── */
+.tango-count {
+  font-size: 0.82rem; color: #999; margin-left: auto;
 }
-table.wordlist th {
-  text-align: left; padding: 0.5rem 0.75rem;
-  border-bottom: 2px solid #ddd; font-weight: 600;
-  position: sticky; top: 0; background: var(--bg, #fff);
+
+/* ── 表格 ── */
+.tango-wrap {
+  border: 1.5px solid #e5e5e5; border-radius: 12px; overflow: hidden;
 }
-table.wordlist td {
-  padding: 0.45rem 0.75rem; border-bottom: 1px solid #eee;
+table.tango {
+  width: 100%; border-collapse: collapse; font-size: 0.92rem;
 }
-table.wordlist .num { color: #999; font-size: 0.8rem; width: 3rem; }
-table.wordlist .kanji { font-size: 1.05rem; }
-table.wordlist .kana { font-size: 0.95rem; color: #555; }
-table.wordlist .lesson-label { font-size: 0.8rem; color: #aaa; width: 5rem; }
-.dim { opacity: 0.2; filter: blur(3px); user-select: none; }
-#count { font-size: 0.85rem; color: #888; }
+table.tango thead {
+  background: #f8f8f8;
+}
+table.tango th {
+  text-align: left; padding: 0.6rem 0.75rem;
+  font-weight: 600; font-size: 0.8rem; letter-spacing: 0.03em;
+  color: #888; text-transform: uppercase;
+  border-bottom: 1.5px solid #e5e5e5;
+}
+table.tango td {
+  padding: 0.55rem 0.75rem; border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+table.tango tbody tr:hover td {
+  background: #fafafa;
+}
+table.tango tbody tr:last-child td {
+  border-bottom: none;
+}
+table.tango .num { color: #ccc; font-size: 0.78rem; width: 2.5rem; }
+table.tango .kanji { font-size: 1.05rem; font-weight: 500; }
+table.tango .kana { font-size: 0.92rem; color: #666; }
+table.tango .lesson-label {
+  font-size: 0.75rem; color: #bbb; width: 4rem; text-align: right;
+}
+.dim { opacity: 0.15; filter: blur(4px); user-select: none; transition: all 0.3s; }
+
+/* ── 暗色模式 ── */
 @media (prefers-color-scheme: dark) {
-  .controls { background: #2a2a2a; }
-  table.wordlist th { background: #1a1a1a; }
+  .tango-header select {
+    background-color: #2a2a2a; border-color: #444; color: #ddd;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  }
+  .mode-group { border-color: #444; }
+  .mode-btn { color: #aaa; }
+  .mode-btn:hover { background: #333; }
+  .mode-btn.active { background: #3185a1; color: #fff; }
+  .mode-btn + .mode-btn { border-left-color: #444; }
+  .tango-wrap { border-color: #333; }
+  table.tango thead { background: #1e1e1e; }
+  table.tango th { color: #777; border-bottom-color: #333; }
+  table.tango td { border-bottom-color: #282828; }
+  table.tango tbody tr:hover td { background: #1a1a1a; }
+  table.tango .kana { color: #999; }
+  table.tango .lesson-label { color: #555; }
+  .tango-count { color: #666; }
 }
 </style>
 
 ## 単語表
 
-<div class="controls">
+<div class="tango-header">
+  <span class="brand">▼ 課</span>
   <select onchange="filterLesson(this.value)">
-    <option value="all">全部</option>
+    <option value="all">すべて</option>
     <option value="第1课">第1课</option>
     <option value="第3课">第3课</option>
     <option value="第6课">第6课</option>
@@ -92,20 +157,22 @@ table.wordlist .lesson-label { font-size: 0.8rem; color: #aaa; width: 5rem; }
     <option value="第9课">第9课</option>
   </select>
 
-  <span style="display:flex;gap:0.25rem">
-    <button class="mode-btn active" data-mode="both" onclick="setMode('both')">全部表示</button>
+  <div class="mode-group">
+    <button class="mode-btn active" data-mode="both" onclick="setMode('both')">両方</button>
     <button class="mode-btn" data-mode="kanji" onclick="setMode('kanji')">漢字を隠す</button>
     <button class="mode-btn" data-mode="kana" onclick="setMode('kana')">仮名を隠す</button>
-  </span>
+  </div>
 
-  <span id="count"></span>
+  <span class="tango-count" id="count"></span>
 </div>
 
-<table class="wordlist">
+<div class="tango-wrap">
+<table class="tango">
   <thead>
     <tr><th class="num">#</th><th class="kanji">漢字</th><th class="kana">読み</th><th class="lesson-label">課</th></tr>
   </thead>
   <tbody id="tbody"></tbody>
 </table>
+</div>
 
 <script is:inline>render();</script>
