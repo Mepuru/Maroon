@@ -41,106 +41,68 @@ function setMode(m) {
 </script>
 
 <style is:inline>
-/* ── 控制栏 ── */
 .tango-header {
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
   margin-bottom: 1.5rem;
 }
 .tango-header .brand {
-  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em;
-  color: var(--color-accent, #3185a1);
-  margin-right: 0.5rem;
+  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-right: 0.25rem;
 }
 .tango-header select {
-  padding: 0.45rem 2rem 0.45rem 0.75rem;
-  border: 1.5px solid #d0d0d0; border-radius: 8px;
-  font-size: 0.85rem; background: var(--bg, #fff);
-  cursor: pointer; appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  padding: 0.4rem 2rem 0.4rem 0.75rem;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 0.85rem; background: var(--card-bg);
+  cursor: pointer; appearance: none; color: var(--fg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 0.5rem center;
   transition: border-color 0.2s;
 }
-.tango-header select:hover { border-color: #999; }
-.tango-header select:focus { outline: none; border-color: #3185a1; }
+.tango-header select:hover { border-color: var(--accent); }
+.tango-header select:focus { outline: none; border-color: var(--accent); }
 
-/* ── 模式按钮 ── */
 .mode-group {
-  display: flex; gap: 0; border: 1.5px solid #d0d0d0; border-radius: 8px; overflow: hidden;
+  display: flex; gap: 0; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;
 }
 .mode-btn {
   padding: 0.4rem 0.85rem; border: none; background: transparent;
-  font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
-  color: #555;
+  font-size: 0.82rem; cursor: pointer; transition: all 0.2s; color: var(--muted);
 }
-.mode-btn + .mode-btn {
-  border-left: 1.5px solid #d0d0d0;
-}
-.mode-btn:hover {
-  background: #f0f0f0;
-}
-.mode-btn.active {
-  background: #3185a1; color: #fff; font-weight: 500;
-}
+.mode-btn + .mode-btn { border-left: 1.5px solid var(--border); }
+.mode-btn:hover { background: var(--accent-light); }
+.mode-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
 
-/* ── 统计 ── */
 .tango-count {
-  font-size: 0.82rem; color: #999; margin-left: auto;
+  font-size: 0.82rem; color: var(--muted); margin-left: auto;
 }
 
-/* ── 表格 ── */
 .tango-wrap {
-  border: 1.5px solid #e5e5e5; border-radius: 12px; overflow: hidden;
+  border: 1.5px solid var(--border); border-radius: var(--radius-md); overflow: hidden;
 }
 table.tango {
-  width: 100%; border-collapse: collapse; font-size: 0.92rem;
+  width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 0.92rem;
 }
-table.tango thead {
-  background: #f8f8f8;
-}
+table.tango thead { background: var(--bg-secondary); }
 table.tango th {
   text-align: left; padding: 0.6rem 0.75rem;
   font-weight: 600; font-size: 0.8rem; letter-spacing: 0.03em;
-  color: #888; text-transform: uppercase;
-  border-bottom: 1.5px solid #e5e5e5;
+  color: var(--muted); border-bottom: 1.5px solid var(--border);
 }
 table.tango td {
-  padding: 0.55rem 0.75rem; border-bottom: 1px solid #f0f0f0;
-  transition: background 0.15s;
+  padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border);
+  transition: background 0.15s; color: var(--fg);
 }
-table.tango tbody tr:hover td {
-  background: #fafafa;
-}
-table.tango tbody tr:last-child td {
-  border-bottom: none;
-}
-table.tango .num { color: #ccc; font-size: 0.78rem; width: 2.5rem; }
-table.tango .kanji { font-size: 1.05rem; font-weight: 500; }
-table.tango .kana { font-size: 0.92rem; color: #666; }
-table.tango .lesson-label {
-  font-size: 0.75rem; color: #bbb; width: 4rem; text-align: right;
-}
-.dim { opacity: 0.15; filter: blur(4px); user-select: none; transition: all 0.3s; }
+table.tango tbody tr:hover td { background: var(--accent-light); }
+table.tango tbody tr:last-child td { border-bottom: none; }
 
-/* ── 暗色模式 ── */
-@media (prefers-color-scheme: dark) {
-  .tango-header select {
-    background-color: #2a2a2a; border-color: #444; color: #ddd;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  }
-  .mode-group { border-color: #444; }
-  .mode-btn { color: #aaa; }
-  .mode-btn:hover { background: #333; }
-  .mode-btn.active { background: #3185a1; color: #fff; }
-  .mode-btn + .mode-btn { border-left-color: #444; }
-  .tango-wrap { border-color: #333; }
-  table.tango thead { background: #1e1e1e; }
-  table.tango th { color: #777; border-bottom-color: #333; }
-  table.tango td { border-bottom-color: #282828; }
-  table.tango tbody tr:hover td { background: #1a1a1a; }
-  table.tango .kana { color: #999; }
-  table.tango .lesson-label { color: #555; }
-  .tango-count { color: #666; }
+table.tango .num      { color: var(--muted); font-size: 0.78rem; width: 8%; }
+table.tango .kanji    { font-size: 1.05rem; font-weight: 500; width: 38%; }
+table.tango .kana     { font-size: 0.92rem; width: 38%; }
+table.tango .lesson-label {
+  font-size: 0.75rem; color: var(--muted); width: 16%; text-align: right;
 }
+.dim { opacity: 0.12; filter: blur(4px); user-select: none; transition: all 0.3s; }
 </style>
 
 ## 単語表
