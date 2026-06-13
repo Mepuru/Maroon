@@ -41,9 +41,22 @@ function setMode(m) {
 </script>
 
 <style is:inline>
+/* ── 全宽容器：突破 .doc-article 的 800px 限制 ── */
+.tango-full {
+  width: 100dvw;
+  margin-left: calc(-50dvw + 50%);
+  margin-right: calc(-50dvw + 50%);
+}
+.tango-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── 控制栏 ── */
 .tango-header {
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 .tango-header .brand {
   font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em;
@@ -77,6 +90,7 @@ function setMode(m) {
   font-size: 0.82rem; color: var(--muted); margin-left: auto;
 }
 
+/* ── 表格 ── */
 .tango-wrap {
   border: 1.5px solid var(--border); border-radius: var(--radius-md); overflow: hidden;
 }
@@ -85,7 +99,7 @@ table.tango {
 }
 table.tango thead { background: var(--bg-secondary); }
 table.tango th {
-  text-align: left; padding: 0.6rem 0.75rem;
+  text-align: left; padding: 0.65rem 0.75rem;
   font-weight: 600; font-size: 0.8rem; letter-spacing: 0.03em;
   color: var(--muted); border-bottom: 1.5px solid var(--border);
 }
@@ -106,6 +120,9 @@ table.tango .lesson-label {
 </style>
 
 ## 単語表
+
+<div class="tango-full">
+<div class="tango-inner">
 
 <div class="tango-header">
   <span class="brand">▼ 課</span>
@@ -135,6 +152,9 @@ table.tango .lesson-label {
   </thead>
   <tbody id="tbody"></tbody>
 </table>
+</div>
+
+</div>
 </div>
 
 <script is:inline>render();</script>
