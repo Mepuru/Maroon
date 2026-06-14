@@ -36,6 +36,7 @@ interface Props {
   icp?: string;
   icpUrl?: string;
   themeUrl?: string;
+  rssUrl?: string;
   // Page-level
   title?: string;
   description?: string;
@@ -70,6 +71,9 @@ const author = Astro.props.author ?? ctx?.author ?? '';
 const icp = Astro.props.icp ?? ctx?.footer?.icp;
 const icpUrl = Astro.props.icpUrl ?? ctx?.footer?.icpUrl;
 const themeUrl = Astro.props.themeUrl ?? ctx?.footer?.themeUrl;
+
+const rssConfig = ctx?.footer?.rss;
+const rssUrl = Astro.props.rssUrl ?? (rssConfig?.enable ? '/rss.xml' : undefined);
 
 const title = Astro.props.title ?? siteTitle;
 const description = Astro.props.description ?? siteDescription;
@@ -111,6 +115,8 @@ const authorUrl = routes?.about ? `${siteOrigin}${routes.about}` : `${siteOrigin
 
     <!-- Canonical -->
     <link rel="canonical" href={canonicalUrl} />
+
+    {rssUrl && <link rel="alternate" type="application/rss+xml" title={siteTitle} href={rssUrl} />}
 
     <ViewTransitions />
     <title>{title}</title>
@@ -157,7 +163,7 @@ const authorUrl = routes?.about ? `${siteOrigin}${routes.about}` : `${siteOrigin
         />
       )}
     </div>
-    <Footer {author} {icp} {icpUrl} {themeUrl} />
+    <Footer {author} {icp} {icpUrl} {themeUrl} {rssUrl} />
     <Search />
     <ImageZoom />
     <script>
